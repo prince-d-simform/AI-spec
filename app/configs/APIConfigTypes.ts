@@ -1,0 +1,3 @@
+export enum APIErrorType {
+    USER_CANCELLED_REQUEST = 'USER_CANCELLED_REQUEST',
+}

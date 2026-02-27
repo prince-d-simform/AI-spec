@@ -1,0 +1,44 @@
+# ─────────────────────────────────────────────────────────────
+# Secrets and environment
+# ─────────────────────────────────────────────────────────────
+.env*
+*.env
+.env
+.env.*
+credentials.json
+ios/tmp.xcconfig
+
+# ─────────────────────────────────────────────────────────────
+# Dependencies, build outputs, caches
+# ─────────────────────────────────────────────────────────────
+node_modules/
+.expo/
+dist/
+build/
+web-build/
+.gradle/
+.cxx/
+.idea/
+coverage/
+.metro-health-check*
+*.log
+*.orig.*
+
+# ─────────────────────────────────────────────────────────────
+# Artifacts and binaries
+# ─────────────────────────────────────────────────────────────
+*.apk
+*.aab
+*.app
+*.ipa
+*.tar.gz
+*.jsbundle
+*.keystore
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+.DS_Store
+local.properties
+!debug.keystore
+*.key
