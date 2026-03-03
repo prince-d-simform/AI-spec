@@ -1,3 +1,5 @@
+<!--
+
 # SYNC IMPACT REPORT
 
 Version change: [placeholder] → 1.0.0
@@ -32,7 +34,7 @@ Follow-up TODOs:
 - TODO(RATIFICATION_DATE): Confirm original project adoption date if
   different from 2026-02-27 and update accordingly.
   ================================================================================
-  -->
+-->
 
 # AiSpec Constitution
 
