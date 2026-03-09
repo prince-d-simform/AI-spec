@@ -16,9 +16,9 @@ import axios, { type AxiosRequestConfig, type CancelTokenSource, type Method } f
 import _ from 'lodash';
 import { Strings, AppEnvConst } from '../constants';
 import { formatString, getErrorResponse } from '../utils/CommonUtils';
+import { APIErrorType } from './APIConfigTypes';
 import { sentryCaptureAPIException } from './SentryConfig';
 import type { ErrorResponse } from '../types';
-import { APIErrorType } from './APIConfigTypes';
 
 /**
  * ResponseBound is an object that has a property called message that is a string or undefined.
@@ -287,7 +287,10 @@ function handleCatchError(error: unknown): ErrorResponse {
  * @param {ApiErrorResponse<Response>} response - The API error response to process.
  * @param {string} url - The URL of the API endpoint that was called.
  */
-function processResponseAndCaptureInfo<Response extends ResponseBound>(response: ApiErrorResponse<Response>, url: string) {
+function processResponseAndCaptureInfo<Response extends ResponseBound>(
+  response: ApiErrorResponse<Response>,
+  url: string
+) {
   const responseClone = _.cloneDeep(response);
   responseClone?.config && delete responseClone.config;
   responseClone?.headers && delete responseClone.headers;

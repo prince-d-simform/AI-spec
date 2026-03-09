@@ -8,5 +8,5 @@ export const getReactotronEnhancer = () => {
     return [Reactotron.createEnhancer()];
   } else {
     return [];
-  } 
+  }
 };

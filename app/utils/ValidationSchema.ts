@@ -9,6 +9,5 @@ export const SigninFormSchema = Yup.object().shape({
   email: Yup.string()
     .required(Strings.YupError.requireEmailError)
     .email(Strings.YupError.invalidEmailError),
-  password: Yup.string()
-    .required(Strings.YupError.requirePasswordError)
+  password: Yup.string().required(Strings.YupError.requirePasswordError)
 });

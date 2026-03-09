@@ -6,10 +6,13 @@
   "language": "en",
   // words - list of words to be always considered correct
   "words": [
+    "aispec",
     "Apisauce",
     "Ashville",
     "buildconfig",
     "Cochiti",
+    "Demi",
+    "ellipsize",
     "Formik",
     "Inei",
     "Itmeo",
@@ -19,13 +22,17 @@
     "Pacman",
     "Palo",
     "persistor",
+    "Picsum",
     "Pressable",
+    "PRZM",
     "Reactotron",
     "reduxjs",
     "Retrowave",
     "Sharpeye",
     "signin",
-    "simform"
+    "simform",
+    "Subviews",
+    "Sweetext"
   ],
   // flagWords - list of words to be always considered incorrect
   // This is useful for offensive words and common spelling errors.

@@ -1,11 +1,8 @@
-
-import type { ApiResponse } from 'apisauce';
-
 import * as Sentry from '@sentry/react-native';
 import _ from 'lodash';
 import { AppEnvConst, Strings } from '../constants';
 import type { UserResponse } from '../types';
-
+import type { ApiResponse } from 'apisauce';
 
 /**
  * Initializes the Sentry client with the Sentry URL, the environment, and whether or not we're in debug mode.
@@ -14,7 +11,11 @@ import type { UserResponse } from '../types';
  * @param {boolean} debug - Whether or not to enable debug mode.
  * @returns None
  */
-if (!AppEnvConst.isDevelopment && !_.isEmpty(AppEnvConst.sentryUrl) && !_.isEqual(AppEnvConst.sentryUrl, 'NA')) {
+if (
+  !AppEnvConst.isDevelopment &&
+  !_.isEmpty(AppEnvConst.sentryUrl) &&
+  !_.isEqual(AppEnvConst.sentryUrl, 'NA')
+) {
   Sentry.init({
     dsn: AppEnvConst.sentryUrl,
     environment: AppEnvConst.environment,
@@ -46,9 +47,9 @@ if (!AppEnvConst.isDevelopment && !_.isEmpty(AppEnvConst.sentryUrl) && !_.isEqua
  */
 export function sentryCaptureAPIException(
   endpoint: string | undefined,
-  
+
   response: ApiResponse<any> | null,
-  
+
   error: unknown
 ): void {
   if (!AppEnvConst.isDevelopment) {
@@ -56,8 +57,8 @@ export function sentryCaptureAPIException(
       typeof error === 'string'
         ? error
         : error instanceof Error
-        ? error?.message
-        : Strings.APIError.unexpectedError;
+          ? error?.message
+          : Strings.APIError.unexpectedError;
 
     const customError: Error = new Error(errorMessage);
     customError.name = endpoint ? `${Strings.APIError.error}: ${endpoint}` : Strings.APIError.error;
@@ -67,10 +68,9 @@ export function sentryCaptureAPIException(
         endpoint,
         response,
         errorMessage,
-        
+
         status: response?.status,
         ErrorResponse: response?.data
-        
       }
     });
   }

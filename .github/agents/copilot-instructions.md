@@ -3,6 +3,8 @@
 Auto-generated from all feature plans. Last updated: 2026-03-03
 
 ## Active Technologies
+- TypeScript 5.8 (strict mode) + React Native 0.81.4, Expo SDK 54, React Navigation v6 (002-product-listing-home)
+- N/A (static dummy data only, no persistence) (002-product-listing-home)
 
 - TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54 + `react-native` (Text, StyleSheet), `useTheme` hook, `scale()` from Metrics, `Colors`/`ApplicationStyles` from theme barrel (003-text-variant-component)
 
@@ -22,6 +24,7 @@ npm test && npm run lint
 TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54: Follow standard conventions
 
 ## Recent Changes
+- 002-product-listing-home: Added TypeScript 5.8 (strict mode) + React Native 0.81.4, Expo SDK 54, React Navigation v6
 
 - 003-text-variant-component: Added TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54 + `react-native` (Text, StyleSheet), `useTheme` hook, `scale()` from Metrics, `Colors`/`ApplicationStyles` from theme barrel
 
