@@ -4,13 +4,23 @@
     "details": "Details",
     "signIn": "Sign In",
     "lightTheme": "Light Theme",
-    "darkTheme": "Dark Theme"
+    "darkTheme": "Dark Theme",
+    "discoverProducts": "Discover Products",
+    "findSomething": "Find something you love",
+    "categoryAll": "All",
+    "categoryElectronics": "Electronics",
+    "categoryFashion": "Fashion",
+    "categoryHome": "Home & Living",
+    "categoryBeauty": "Beauty",
+    "categorySports": "Sports",
+    "emptyState": "No products in this category",
+    "pricePrefix": "$"
   },
   "details": {
     "title": "Details Screen"
   },
   "apiError": {
-    "clientError":"Invalid or incomplete data provided by the client.",
+    "clientError": "Invalid or incomplete data provided by the client.",
     "serverError": "An error occurred on the server.",
     "timeoutError": "The server didn't respond in time.",
     "connectionError": "Server not available, bad DNS.",

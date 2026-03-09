@@ -66,7 +66,9 @@ export default function SigninForm({
         disabled={disabled}
         loading={loading}
         title={Strings.Auth.btnSignIn}
-        onPress={handleSubmit}
+        onPress={() => {
+          handleSubmit();
+        }}
       />
     </View>
   );

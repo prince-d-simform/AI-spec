@@ -14,8 +14,24 @@ type Keys =
   | 'lightBlue'
   | 'red'
   | 'darkBlue'
-  | 'transparent' 
-  | 'green';
+  | 'transparent'
+  | 'green'
+  // Pastel accent palette
+  | 'pastelRose'
+  | 'pastelMint'
+  | 'pastelLavender'
+  | 'pastelPeach'
+  | 'pastelSky'
+  | 'pastelLemon'
+  // Semantic UI tokens — Home screen
+  | 'cardBackground'
+  | 'cardShadow'
+  | 'chipInactive'
+  | 'chipInactiveText'
+  | 'ratingGold'
+  | 'imagePlaceholder'
+  | 'screenBackground'
+  | 'headerSubtitle';
 
 // Define common keys for colors
 type CommonKeys = 'white' | 'black' | 'transparentBlack' | 'transparentWhite';
@@ -32,7 +48,23 @@ const themeColors: Record<Keys, string> = {
   red: '#DD2C2C',
   darkBlue: '#374dfc',
   transparent: 'transparent',
-  green: '#34A853'
+  green: '#34A853',
+  // Pastel accent palette (same value in light + dark)
+  pastelRose: '#FFD6D6',
+  pastelMint: '#C8F0DC',
+  pastelLavender: '#DDD6FF',
+  pastelPeach: '#FFE5CC',
+  pastelSky: '#CCE8FF',
+  pastelLemon: '#FFFACC',
+  // Semantic UI tokens — light defaults (overridden in dark)
+  cardBackground: '#FFFFFF',
+  cardShadow: '#00000018',
+  chipInactive: '#F2F2F2',
+  chipInactiveText: '#7B7B7B',
+  ratingGold: '#F4C430',
+  imagePlaceholder: '#E8E8E8',
+  screenBackground: '#F7F7F7',
+  headerSubtitle: '#7B7B7B'
 };
 
 // Define common colors with corresponding color values
@@ -67,7 +99,13 @@ const dark: ThemeColors = {
   black: commonColors.white,
   white: commonColors.black,
   transparentWhite: commonColors.transparentBlack,
-  transparentBlack: commonColors.transparentWhite
+  transparentBlack: commonColors.transparentWhite,
+  // Dark-mode overrides for semantic UI tokens
+  cardBackground: '#1E1E1E',
+  cardShadow: '#00000040',
+  chipInactive: '#2A2A2A',
+  imagePlaceholder: '#2D2D2D',
+  screenBackground: '#121212'
 };
 
 export enum ThemeModeEnum {

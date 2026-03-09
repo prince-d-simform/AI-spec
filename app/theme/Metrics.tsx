@@ -33,7 +33,7 @@ baseSize = (baseWidth + baseHeight) * (isTablet ? 0.4 : 0.5);
  * @param {number} size - The screen's size that UI element should cover
  * @returns {number} The scaled size depending on the current device's screen size.
  */
-const scale = (size: number, disableCeil: boolean = false): number => 
+const scale = (size: number, disableCeil: boolean = false): number =>
   disableCeil ? size * baseSize : Math.ceil(size * baseSize);
 
 /**

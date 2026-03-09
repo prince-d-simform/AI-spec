@@ -38,7 +38,7 @@ const rootReducer = combineReducers({
  */
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
-const middlewareList: Array<any> = [];
+const middlewareList: any[] = [];
 
 /* Creating a store with the persisted reducer. */
 /**
@@ -49,7 +49,7 @@ const middlewareList: Array<any> = [];
  * The default store is configured with the serializableCheck middleware,
  * which allows for actions to be serialized and deserialized.
  */
-let enhancers: Array<any> = [];
+let enhancers: any[] = [];
 if (AppEnvConst.isDevelopment) {
   enhancers = getReactotronEnhancer();
 }

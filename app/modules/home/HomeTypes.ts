@@ -1,0 +1,52 @@
+/**
+ * HomeTypes.ts
+ *
+ * Core TypeScript types for the Product Listing Home Screen.
+ * These types are shared by HomeData, useHome, and all sub-components.
+ *
+ * Source: data-model.md
+ */
+
+/**
+ * Represents a product grouping used for filtering.
+ *
+ * - The first entry in CATEGORIES must have slug: 'all' (wildcard — shows all products).
+ * - All slug values must be unique and URL-safe (lowercase, hyphenated).
+ */
+export interface Category {
+  /** Unique identifier, e.g. 'cat-1' */
+  id: string;
+  /** Display label, e.g. 'Electronics' — sourced from Strings.Home.* */
+  name: string;
+  /**
+   * Filter key used to match Product.category, e.g. 'electronics'.
+   * Special value: 'all' → shows all products.
+   */
+  slug: string;
+}
+
+/**
+ * Represents a single item in the product catalog.
+ */
+export interface Product {
+  /** Unique identifier — also used as FlatList key and Picsum seed */
+  id: string;
+  /** Display name — max 2 lines shown in card (truncated with ellipsis) */
+  title: string;
+  /** Numeric price in display currency units, e.g. 29.99 */
+  price: number;
+  /** Star rating 1.0–5.0 */
+  rating: number;
+  /** Slug matching a Category.slug (never 'all') */
+  category: string;
+  /** Remote placeholder URL — https://picsum.photos/seed/${id}/400/600 */
+  imageUrl: string;
+}
+
+/**
+ * Represents the currently selected filter state in useHome.
+ *
+ * Defaults to 'all' (shows every product).
+ * Set to a category slug when a non-All chip is tapped.
+ */
+export type ActiveCategoryFilter = string;

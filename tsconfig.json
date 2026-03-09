@@ -10,7 +10,7 @@
     "jsx": "react-native",
     "experimentalDecorators": true,
     "module": "esnext",
-    "moduleResolution": "node10",
+    "moduleResolution": "bundler",
     "typeRoots": [
       "app/types",
       "node"

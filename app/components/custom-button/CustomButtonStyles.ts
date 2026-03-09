@@ -28,7 +28,10 @@ export const getTextVariant = (buttonVariant: CustomButtonVariant): TextVariant 
  * @param {ThemeMode} theme - The theme mode of the application. (Unused)
  * @returns {keyof ThemeColors} The color of the activity indicator.
  */
-export const activityIndicatorColor = (buttonVariant: CustomButtonVariant, theme: ThemeMode): string => {
+export const activityIndicatorColor = (
+  buttonVariant: CustomButtonVariant,
+  theme: ThemeMode
+): string => {
   switch (buttonVariant) {
     case 'outline':
       return Colors[theme]?.lightBlue;

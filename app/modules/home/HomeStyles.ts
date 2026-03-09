@@ -1,19 +1,44 @@
 import { StyleSheet } from 'react-native';
-import { Colors, type ThemeMode } from '../../theme';
+import { Colors, scale, type ThemeMode } from '../../theme';
 
 /**
- * A StyleSheet object that contains all of the home screen styles.
- * @param {ThemeMode} theme - The theme to use for the styles.
- * @returns {StyleSheet} A StyleSheet object containing all of the home screen styles.
+ * Screen-level styles for HomeScreen.
+ * All dimensions via scale(), all colors via Colors[theme] (no hardcoded values).
  */
 const styles = (theme: ThemeMode) =>
   StyleSheet.create({
-    screenView: {
-      backgroundColor: Colors[theme]?.white,
-      flex: 1
+    /** Horizontal chip row — padding for scroll content */
+    chipRow: {
+      paddingBottom: scale(12),
+      paddingHorizontal: scale(10),
+      paddingTop: scale(4)
     },
-    textView: {
-      color: Colors[theme]?.black
+    /** columnWrapperStyle for the 2-column FlatList */
+    columnWrapper: {
+      justifyContent: 'space-between'
+    },
+    /** Empty-state container — centred vertically */
+    emptyContainer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      paddingTop: scale(60)
+    },
+    /** Empty-state message text */
+    emptyText: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(15),
+      textAlign: 'center'
+    },
+    /** FlatList contentContainerStyle */
+    grid: {
+      paddingBottom: scale(24),
+      paddingHorizontal: scale(8)
+    },
+    /** Root SafeAreaView */
+    screen: {
+      backgroundColor: Colors[theme]?.screenBackground,
+      flex: 1
     }
   });
 
