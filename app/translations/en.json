@@ -8,11 +8,8 @@
     "discoverProducts": "Discover Products",
     "findSomething": "Find something you love",
     "categoryAll": "All",
-    "categoryElectronics": "Electronics",
-    "categoryFashion": "Fashion",
-    "categoryHome": "Home & Living",
-    "categoryBeauty": "Beauty",
-    "categorySports": "Sports",
+    "categoryLoadError": "Unable to load categories right now.",
+    "retryCategories": "Retry Categories",
     "emptyState": "No products in this category",
     "pricePrefix": "$"
   },

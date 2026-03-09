@@ -58,11 +58,8 @@ const Home = freezeStringsObject({
   discoverProducts: I18n.t('home:discoverProducts'),
   findSomething: I18n.t('home:findSomething'),
   categoryAll: I18n.t('home:categoryAll'),
-  categoryElectronics: I18n.t('home:categoryElectronics'),
-  categoryFashion: I18n.t('home:categoryFashion'),
-  categoryHome: I18n.t('home:categoryHome'),
-  categoryBeauty: I18n.t('home:categoryBeauty'),
-  categorySports: I18n.t('home:categorySports'),
+  categoryLoadError: I18n.t('home:categoryLoadError'),
+  retryCategories: I18n.t('home:retryCategories'),
   emptyState: I18n.t('home:emptyState'),
   pricePrefix: I18n.t('home:pricePrefix')
 });

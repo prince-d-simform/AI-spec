@@ -16,5 +16,5 @@ export default Object.freeze({
     __DEV__ || (process.env.EXPO_PUBLIC_ENVIRONMENT ?? 'development') === 'development',
   environment: process.env.EXPO_PUBLIC_ENVIRONMENT ?? 'development',
   sentryUrl: process.env.EXPO_PUBLIC_SENTRY_URL ?? '',
-  apiUrl: process.env.EXPO_PUBLIC_API_URL ?? ''
+  apiUrl: process.env.EXPO_PUBLIC_API_URL ?? 'https://dummyjson.com'
 });

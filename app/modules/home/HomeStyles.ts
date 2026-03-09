@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { Colors, scale, type ThemeMode } from '../../theme';
+import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../theme';
 
 /**
  * Screen-level styles for HomeScreen.
@@ -7,6 +7,20 @@ import { Colors, scale, type ThemeMode } from '../../theme';
  */
 const styles = (theme: ThemeMode) =>
   StyleSheet.create({
+    ...ApplicationStyles(theme),
+    categoryRowContainer: {
+      minHeight: scale(44)
+    },
+    categoryStatusContainer: {
+      alignItems: 'flex-start',
+      gap: scale(8),
+      paddingBottom: scale(12),
+      paddingHorizontal: scale(10)
+    },
+    categoryStatusText: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(13)
+    },
     /** Horizontal chip row — padding for scroll content */
     chipRow: {
       paddingBottom: scale(12),
@@ -34,6 +48,10 @@ const styles = (theme: ThemeMode) =>
     grid: {
       paddingBottom: scale(24),
       paddingHorizontal: scale(8)
+    },
+    retryButton: {
+      paddingHorizontal: scale(12),
+      width: 'auto'
     },
     /** Root SafeAreaView */
     screen: {

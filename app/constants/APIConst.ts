@@ -3,5 +3,6 @@
  * @type {Object}
  */
 export default Object.freeze({
-  signin: '/login'
+  signin: '/login',
+  productCategories: '/products/categories'
 });

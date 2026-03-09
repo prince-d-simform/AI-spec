@@ -1,25 +1,15 @@
-import Strings from '../../constants/Strings';
-import type { Category, Product } from './HomeTypes';
+import type { Product } from './HomeTypes';
 
 /**
- * Static list of product categories.
- * - First entry (slug: 'all') is the wildcard chip that shows every product.
- * - All name values are sourced from Strings.Home.* (Constitution V).
+ * Placeholder chip widths used while remote categories are loading.
  */
-export const CATEGORIES: readonly Category[] = [
-  { id: 'cat-0', name: Strings.Home.categoryAll, slug: 'all' },
-  { id: 'cat-1', name: Strings.Home.categoryElectronics, slug: 'electronics' },
-  { id: 'cat-2', name: Strings.Home.categoryFashion, slug: 'fashion' },
-  { id: 'cat-3', name: Strings.Home.categoryHome, slug: 'home-living' },
-  { id: 'cat-4', name: Strings.Home.categoryBeauty, slug: 'beauty' },
-  { id: 'cat-5', name: Strings.Home.categorySports, slug: 'sports' }
-] as const;
+export const CATEGORY_CHIP_SHIMMER_WIDTHS: readonly number[] = [72, 104, 88, 116, 94] as const;
 
 /**
  * Static list of 14 dummy products spread across 5 categories.
  * - imageUrl uses a deterministic Picsum seed so each product always
  *   renders the same image.
- * - All category values match a non-'all' slug in CATEGORIES.
+ * - Category values match the category slugs used by the Home screen filter.
  */
 export const PRODUCTS: readonly Product[] = [
   // ── Electronics (3) ───────────────────────────────────────────────
@@ -34,7 +24,7 @@ export const PRODUCTS: readonly Product[] = [
   {
     id: 'p-02',
     title: 'Smart Watch Pro Series 5',
-    price: 249.0,
+    price: 249,
     rating: 4.7,
     category: 'electronics',
     imageUrl: 'https://picsum.photos/seed/p-02/400/600'
@@ -85,7 +75,7 @@ export const PRODUCTS: readonly Product[] = [
     id: 'p-08',
     title: 'Bamboo Kitchen Cutting Board Set',
     price: 34.99,
-    rating: 4.0,
+    rating: 4,
     category: 'home-living',
     imageUrl: 'https://picsum.photos/seed/p-08/400/600'
   },
@@ -93,7 +83,7 @@ export const PRODUCTS: readonly Product[] = [
   {
     id: 'p-09',
     title: 'Vitamin C Brightening Face Serum',
-    price: 38.0,
+    price: 38,
     rating: 4.8,
     category: 'beauty',
     imageUrl: 'https://picsum.photos/seed/p-09/400/600'
@@ -118,7 +108,7 @@ export const PRODUCTS: readonly Product[] = [
   {
     id: 'p-12',
     title: 'Professional Yoga Mat Non-Slip',
-    price: 55.0,
+    price: 55,
     rating: 4.6,
     category: 'sports',
     imageUrl: 'https://picsum.photos/seed/p-12/400/600'
@@ -134,7 +124,7 @@ export const PRODUCTS: readonly Product[] = [
   {
     id: 'p-14',
     title: 'Lightweight Running Shoes',
-    price: 115.0,
+    price: 115,
     rating: 4.7,
     category: 'sports',
     imageUrl: 'https://picsum.photos/seed/p-14/400/600'
