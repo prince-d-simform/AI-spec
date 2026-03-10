@@ -2,7 +2,7 @@
  * HomeTypes.ts
  *
  * Core TypeScript types for the Product Listing Home Screen.
- * These types are shared by HomeData, useHome, and all sub-components.
+ * These types are shared by HomeData, useHome, Redux normalization, and all sub-components.
  *
  * Source: data-model.md
  */
@@ -27,7 +27,7 @@ export interface Category {
  * Represents a single item in the product catalog.
  */
 export interface Product {
-  /** Unique identifier — also used as FlatList key and Picsum seed */
+  /** Unique identifier — also used as the FlatList key */
   id: string;
   /** Display name — max 2 lines shown in card (truncated with ellipsis) */
   title: string;
@@ -37,6 +37,6 @@ export interface Product {
   rating: number;
   /** Slug matching a Category.slug (never 'all') */
   category: string;
-  /** Remote placeholder URL — https://picsum.photos/seed/${id}/400/600 */
+  /** Remote catalog thumbnail URL for the product card */
   imageUrl: string;
 }

@@ -9,8 +9,13 @@
     "findSomething": "Find something you love",
     "categoryAll": "All",
     "categoryLoadError": "Unable to load categories right now.",
+    "emptyStateAll": "No products available right now",
     "retryCategories": "Retry Categories",
     "emptyState": "No products in this category",
+    "productLoadError": "Unable to load products right now.",
+    "productLoading": "Loading products...",
+    "productRefreshError": "Unable to refresh products right now.",
+    "retryProducts": "Retry Products",
     "pricePrefix": "$"
   },
   "details": {

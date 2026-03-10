@@ -44,10 +44,33 @@ const styles = (theme: ThemeMode) =>
       fontSize: scale(15),
       textAlign: 'center'
     },
+    feedbackContainer: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: scale(24),
+      rowGap: scale(12)
+    },
+    feedbackText: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(15),
+      textAlign: 'center'
+    },
     /** FlatList contentContainerStyle */
     grid: {
       paddingBottom: scale(24),
       paddingHorizontal: scale(8)
+    },
+    gridEmptyContent: {
+      flexGrow: 1
+    },
+    productStatusContainer: {
+      paddingBottom: scale(12),
+      paddingHorizontal: scale(10)
+    },
+    productStatusText: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(13)
     },
     retryButton: {
       paddingHorizontal: scale(12),
