@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APIDispatch } from '../../configs';
+import { ROUTES } from '../../constants';
 import { ProductsActions, ProductsSelectors } from '../../redux/products';
 import { useAppDispatch, useAppSelector } from '../../redux/useRedux';
+import { navigateWithPush } from '../../utils';
 import { ProductCard } from './sub-components/product-card';
 import type { Category, Product } from './HomeTypes';
 import type { ProductCategoryResponse } from '../../types/ProductCategoryResponse';
@@ -214,9 +216,19 @@ const useHome = (): UseHomeReturn => {
     [allProducts.length, isProductsRefreshing, productsError]
   );
 
+  const handleProductPress = useCallback((productId: string): void => {
+    if (!productId.trim()) {
+      return;
+    }
+
+    navigateWithPush(ROUTES.Details, { id: productId });
+  }, []);
+
   const renderProductItem = useCallback(
-    ({ item }: { item: Product }): React.ReactElement => <ProductCard product={item} />,
-    []
+    ({ item }: { item: Product }): React.ReactElement => (
+      <ProductCard product={item} onPress={handleProductPress} />
+    ),
+    [handleProductPress]
   );
 
   const keyExtractor = useCallback((item: Product): string => item.id, []);

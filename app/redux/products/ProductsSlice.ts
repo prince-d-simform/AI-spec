@@ -7,6 +7,12 @@ import {
 import { createAsyncThunkWithCancelToken, unauthorizedAPI } from '../../configs';
 import { APIConst, Strings, ToolkitAction } from '../../constants';
 import INITIAL_STATE, { DEFAULT_ALL_CATEGORY, type ProductsStateType } from './ProductsInitial';
+import type {
+  ProductDetail,
+  ProductDimensions,
+  ProductMeta,
+  ProductReview
+} from '../../modules/details';
 import type { Category, Product } from '../../modules/home/HomeTypes';
 import type { ErrorResponse } from '../../types';
 import type {
@@ -15,6 +21,7 @@ import type {
 } from '../../types/ProductCategoryResponse';
 import type {
   RemoteCategoryProductsResponse,
+  RemoteProductDetailResponse,
   RemoteProductRecord,
   RemoteProductsResponse
 } from '../../types/ProductListResponse';
@@ -36,6 +43,16 @@ const getAllProductsRequest = createAsyncThunkWithCancelToken<RemoteProductsResp
   ToolkitAction.getAllProducts,
   'GET',
   APIConst.products,
+  unauthorizedAPI
+);
+
+/**
+ * Fetches one product-detail record from the catalog API.
+ */
+const getProductDetailRequest = createAsyncThunkWithCancelToken<RemoteProductDetailResponse>(
+  ToolkitAction.getProductDetail,
+  'GET',
+  APIConst.productDetail,
   unauthorizedAPI
 );
 
@@ -71,6 +88,28 @@ function formatCategoryNameFromSlug(slug: string): string {
  */
 function normalizeCategorySlug(slug: string): string {
   return slug.trim().toLowerCase();
+}
+
+/**
+ * Trims a required shopper-facing text field.
+ *
+ * @param {string} value - The incoming text value.
+ * @returns {string} The normalized text value.
+ */
+function normalizeText(value: string): string {
+  return value.trim();
+}
+
+/**
+ * Trims an optional text field.
+ *
+ * @param {string | undefined} value - The incoming optional text value.
+ * @returns {string | undefined} The normalized optional value.
+ */
+function normalizeOptionalText(value?: string): string | undefined {
+  const trimmedValue = value?.trim();
+
+  return trimmedValue || undefined;
 }
 
 /**
@@ -132,6 +171,29 @@ function getProductImageUrl(record: RemoteProductRecord): string {
 }
 
 /**
+ * Returns a de-duplicated image list for a product detail view.
+ *
+ * @param {RemoteProductRecord} record - The remote product record.
+ * @returns {string[]} The ordered image URLs.
+ */
+function getProductImageGallery(record: RemoteProductRecord): string[] {
+  const seenImages = new Set<string>();
+  const images = [record.thumbnail, ...record.images]
+    .map((imageUrl) => imageUrl?.trim() ?? '')
+    .filter(Boolean)
+    .filter((imageUrl) => {
+      if (seenImages.has(imageUrl)) {
+        return false;
+      }
+
+      seenImages.add(imageUrl);
+      return true;
+    });
+
+  return images;
+}
+
+/**
  * Normalizes a remote product item into the Home grid product contract.
  *
  * @param {RemoteProductRecord} record - The remote product item.
@@ -161,6 +223,149 @@ function normalizeProduct(record: RemoteProductRecord): Product | null {
     rating: normalizedRating,
     title: normalizedTitle
   };
+}
+
+/**
+ * Normalizes one remote review entry for product-detail rendering.
+ *
+ * @param {RemoteProductDetailResponse['reviews'][number]} review - The remote review entry.
+ * @returns {ProductReview | null} The normalized review or null when invalid.
+ */
+function normalizeProductReview(
+  review: RemoteProductDetailResponse['reviews'][number]
+): ProductReview | null {
+  const normalizedComment = normalizeText(review.comment ?? '');
+  const normalizedReviewerName = normalizeText(review.reviewerName ?? '');
+  const normalizedReviewerEmail = normalizeText(review.reviewerEmail ?? '');
+  const normalizedRating = Number(review.rating);
+  const normalizedDate = normalizeText(review.date ?? '');
+
+  if (
+    !normalizedComment ||
+    !normalizedReviewerName ||
+    !normalizedReviewerEmail ||
+    !normalizedDate ||
+    !Number.isFinite(normalizedRating)
+  ) {
+    return null;
+  }
+
+  return {
+    comment: normalizedComment,
+    date: normalizedDate,
+    rating: normalizedRating,
+    reviewerEmail: normalizedReviewerEmail,
+    reviewerName: normalizedReviewerName
+  };
+}
+
+/**
+ * Normalizes the dimensions block for product-detail rendering.
+ *
+ * @param {RemoteProductDetailResponse['dimensions']} dimensions - The remote dimensions block.
+ * @returns {ProductDimensions} The normalized dimensions.
+ */
+function normalizeProductDimensions(
+  dimensions: RemoteProductDetailResponse['dimensions']
+): ProductDimensions {
+  return {
+    depth: Number.isFinite(dimensions?.depth) ? Number(dimensions.depth) : 0,
+    height: Number.isFinite(dimensions?.height) ? Number(dimensions.height) : 0,
+    width: Number.isFinite(dimensions?.width) ? Number(dimensions.width) : 0
+  };
+}
+
+/**
+ * Normalizes product metadata for product-detail rendering.
+ *
+ * @param {RemoteProductDetailResponse['meta']} meta - The remote metadata block.
+ * @returns {ProductMeta} The normalized metadata block.
+ */
+function normalizeProductMeta(meta: RemoteProductDetailResponse['meta']): ProductMeta {
+  return {
+    barcode: normalizeText(meta?.barcode ?? ''),
+    createdAt: normalizeText(meta?.createdAt ?? ''),
+    qrCode: normalizeText(meta?.qrCode ?? ''),
+    updatedAt: normalizeText(meta?.updatedAt ?? '')
+  };
+}
+
+/**
+ * Normalizes one remote product-detail response.
+ *
+ * @param {RemoteProductDetailResponse} record - The remote product-detail response.
+ * @returns {ProductDetail | null} The normalized product detail or null when invalid.
+ */
+function normalizeProductDetail(record: RemoteProductDetailResponse): ProductDetail | null {
+  const normalizedId = Number.isFinite(record.id) ? String(record.id) : '';
+  const normalizedTitle = normalizeText(record.title ?? '');
+  const normalizedDescription = normalizeText(record.description ?? '');
+  const normalizedCategory = normalizeCategorySlug(record.category ?? '');
+  const normalizedPrice = Number(record.price);
+  const normalizedDiscountPercentage = Number(record.discountPercentage);
+  const normalizedRating = Number(record.rating);
+  const normalizedStock = Number(record.stock);
+  const normalizedWeight = Number(record.weight);
+  const normalizedMinimumOrderQuantity = Number(record.minimumOrderQuantity);
+  const normalizedReviews = record.reviews
+    .map((review) => normalizeProductReview(review))
+    .filter((review): review is ProductReview => !!review);
+
+  if (
+    !normalizedId ||
+    !normalizedTitle ||
+    !normalizedDescription ||
+    !normalizedCategory ||
+    !Number.isFinite(normalizedPrice) ||
+    !Number.isFinite(normalizedDiscountPercentage) ||
+    !Number.isFinite(normalizedRating) ||
+    !Number.isFinite(normalizedStock) ||
+    !Number.isFinite(normalizedWeight) ||
+    !Number.isFinite(normalizedMinimumOrderQuantity)
+  ) {
+    return null;
+  }
+
+  return {
+    availabilityStatus: normalizeText(record.availabilityStatus ?? ''),
+    brand: normalizeOptionalText(record.brand),
+    category: normalizedCategory,
+    description: normalizedDescription,
+    dimensions: normalizeProductDimensions(record.dimensions),
+    discountPercentage: normalizedDiscountPercentage,
+    id: normalizedId,
+    images: getProductImageGallery(record),
+    meta: normalizeProductMeta(record.meta),
+    minimumOrderQuantity: normalizedMinimumOrderQuantity,
+    price: normalizedPrice,
+    rating: normalizedRating,
+    returnPolicy: normalizeText(record.returnPolicy ?? ''),
+    reviews: normalizedReviews,
+    shippingInformation: normalizeText(record.shippingInformation ?? ''),
+    sku: normalizeText(record.sku ?? ''),
+    stock: normalizedStock,
+    tags: record.tags.map((tag) => tag?.trim() ?? '').filter(Boolean),
+    thumbnail: getProductImageUrl(record),
+    title: normalizedTitle,
+    warrantyInformation: normalizeText(record.warrantyInformation ?? ''),
+    weight: normalizedWeight
+  };
+}
+
+/**
+ * Returns whether an API error message should be treated as a product-unavailable state.
+ *
+ * @param {ErrorResponse | undefined} error - The rejected API error response.
+ * @returns {boolean} True when the product is unavailable or not found.
+ */
+function isUnavailableProductError(error?: ErrorResponse): boolean {
+  const normalizedMessage = error?.message?.trim().toLowerCase() ?? '';
+
+  return (
+    normalizedMessage.includes('not found') ||
+    normalizedMessage.includes('unavailable') ||
+    normalizedMessage.includes('does not exist')
+  );
 }
 
 /**
@@ -216,6 +421,22 @@ function clearCategoryProductsStateReducer(state: Draft<ProductsStateType>): voi
 }
 
 /**
+ * Clears active product-detail state.
+ *
+ * @param {Draft<ProductsStateType>} state - The draft products state.
+ * @returns {void}
+ */
+function clearProductDetailStateReducer(state: Draft<ProductsStateType>): void {
+  state.selectedProductId = undefined;
+  state.selectedProductDetail = undefined;
+  state.isProductDetailLoading = false;
+  state.productDetailError = undefined;
+  state.productDetailUnavailable = false;
+  state.productDetailLastUpdated = undefined;
+  state.productDetailRequestId = undefined;
+}
+
+/**
  * Creates the products slice for category loading.
  */
 const productsSlice = createSlice({
@@ -224,6 +445,9 @@ const productsSlice = createSlice({
   reducers: {
     clearCategoryProductsState: (state: Draft<ProductsStateType>) => {
       clearCategoryProductsStateReducer(state);
+    },
+    clearProductDetailState: (state: Draft<ProductsStateType>) => {
+      clearProductDetailStateReducer(state);
     }
   },
   extraReducers: (builder: ActionReducerMapBuilder<ProductsStateType>) => {
@@ -324,6 +548,47 @@ const productsSlice = createSlice({
         state.categoryProductsTotal = undefined;
       }
     );
+    builder.addCase(getProductDetailRequest.pending, (state: Draft<ProductsStateType>, action) => {
+      clearProductDetailStateReducer(state);
+      state.selectedProductId = normalizeText(String(action.meta.arg.paths?.id ?? ''));
+      state.isProductDetailLoading = true;
+      state.productDetailRequestId = action.meta.requestId;
+    });
+    builder.addCase(
+      getProductDetailRequest.fulfilled,
+      (state: Draft<ProductsStateType>, action) => {
+        if (action.meta.requestId !== state.productDetailRequestId) {
+          return;
+        }
+
+        const normalizedProductDetail = normalizeProductDetail(action.payload);
+
+        state.isProductDetailLoading = false;
+        state.productDetailError = undefined;
+        state.productDetailUnavailable = false;
+        state.productDetailLastUpdated = Date.now();
+
+        if (!normalizedProductDetail) {
+          state.selectedProductDetail = undefined;
+          state.productDetailError = { message: Strings.APIError.somethingWentWrong };
+          return;
+        }
+
+        state.selectedProductId = normalizedProductDetail.id;
+        state.selectedProductDetail = normalizedProductDetail;
+      }
+    );
+    builder.addCase(getProductDetailRequest.rejected, (state: Draft<ProductsStateType>, action) => {
+      if (action.meta.requestId !== state.productDetailRequestId) {
+        return;
+      }
+
+      state.selectedProductDetail = undefined;
+      state.isProductDetailLoading = false;
+      state.productDetailError = action.payload;
+      state.productDetailUnavailable = isUnavailableProductError(action.payload);
+      state.productDetailLastUpdated = undefined;
+    });
   }
 });
 
@@ -332,5 +597,6 @@ export const ProductsActions = {
   ...productsSlice.actions,
   getAllProductsRequest,
   getCategoryProductsRequest,
+  getProductDetailRequest,
   getProductCategoriesRequest
 };

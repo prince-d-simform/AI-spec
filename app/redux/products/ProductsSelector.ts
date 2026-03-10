@@ -1,4 +1,5 @@
 import type { ProductsStateType } from './ProductsInitial';
+import type { ProductDetail } from '../../modules/details';
 import type { Category, Product } from '../../modules/home/HomeTypes';
 import type { ErrorResponse } from '../../types';
 import type { RootStateType } from '../Store';
@@ -16,6 +17,12 @@ interface ProductsSelectorsType {
   getCategoryProductsError: (state: RootStateType) => ErrorResponse | undefined;
   getCategoryProductsLastUpdated: (state: RootStateType) => number | undefined;
   getCategoryProductsLoading: (state: RootStateType) => boolean;
+  getSelectedProductId: (state: RootStateType) => string | undefined;
+  getSelectedProductDetail: (state: RootStateType) => ProductDetail | undefined;
+  getProductDetailLoading: (state: RootStateType) => boolean;
+  getProductDetailError: (state: RootStateType) => ErrorResponse | undefined;
+  getProductDetailUnavailable: (state: RootStateType) => boolean;
+  getProductDetailLastUpdated: (state: RootStateType) => number | undefined;
   getError: (state: RootStateType) => ErrorResponse | undefined;
   getProductsError: (state: RootStateType) => ErrorResponse | undefined;
   getProductsLastUpdated: (state: RootStateType) => number | undefined;
@@ -49,6 +56,18 @@ const ProductsSelectors: ProductsSelectorsType = {
     getProductsState(state).categoryProductsLastUpdated,
   getCategoryProductsLoading: (state: RootStateType): boolean =>
     getProductsState(state).isCategoryProductsLoading,
+  getSelectedProductId: (state: RootStateType): string | undefined =>
+    getProductsState(state).selectedProductId,
+  getSelectedProductDetail: (state: RootStateType): ProductDetail | undefined =>
+    getProductsState(state).selectedProductDetail,
+  getProductDetailLoading: (state: RootStateType): boolean =>
+    getProductsState(state).isProductDetailLoading,
+  getProductDetailError: (state: RootStateType): ErrorResponse | undefined =>
+    getProductsState(state).productDetailError,
+  getProductDetailUnavailable: (state: RootStateType): boolean =>
+    getProductsState(state).productDetailUnavailable ?? false,
+  getProductDetailLastUpdated: (state: RootStateType): number | undefined =>
+    getProductsState(state).productDetailLastUpdated,
   getLoading: (state: RootStateType): boolean => getProductsState(state).isLoading,
   getError: (state: RootStateType): ErrorResponse | undefined => getProductsState(state).error,
   getProductsError: (state: RootStateType): ErrorResponse | undefined =>

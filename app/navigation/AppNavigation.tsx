@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { AppEnvConst, ROUTES } from '../constants';
+import { AppEnvConst, ROUTES, Strings } from '../constants';
 import { useTheme } from '../hooks';
 import { DetailsScreen, HomeScreen, SigninScreen } from '../modules';
 import { Colors } from '../theme';
@@ -16,11 +16,11 @@ import { getLinkConfiguration, navigationRef } from '../utils';
  * @property {undefined} [SignIn] - The SignIn screen.
  */
 // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-type RootStackParamList = {
+export type RootStackParamList = {
   // add types for route params here e.g. -
   // [ROUTES.Profile]: { id: string };
   [ROUTES.Home]: undefined;
-  [ROUTES.Details]: undefined;
+  [ROUTES.Details]: { id: string };
   [ROUTES.SignIn]: undefined;
 };
 
@@ -68,7 +68,11 @@ const AppContainer = () => {
       <RootStack.Navigator>
         <RootStack.Screen name={ROUTES.Home} component={HomeScreen} />
         <RootStack.Screen name={ROUTES.SignIn} component={SigninScreen} />
-        <RootStack.Screen name={ROUTES.Details} component={DetailsScreen} />
+        <RootStack.Screen
+          name={ROUTES.Details}
+          component={DetailsScreen}
+          options={{ title: Strings.Details.detailsScreenTitle }}
+        />
       </RootStack.Navigator>
     </NavigationContainer>
   );
