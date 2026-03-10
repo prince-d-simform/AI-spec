@@ -4,6 +4,7 @@ import { getReactotronEnhancer } from '../configs/Reactotron';
 import { AppEnvConst } from '../constants';
 import { reduxStorage } from '../services';
 import { AuthReducer } from './auth';
+import { ProductsReducer } from './products';
 
 /**
  * The Configuring persistConfig object for ReduxStorage.
@@ -27,7 +28,8 @@ const persistConfig = {
  * @returns {Object} The new reducers of the application.
  */
 const rootReducer = combineReducers({
-  auth: AuthReducer
+  auth: AuthReducer,
+  products: ProductsReducer
 });
 
 /**

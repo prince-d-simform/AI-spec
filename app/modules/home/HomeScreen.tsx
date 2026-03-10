@@ -1,10 +1,11 @@
 import React, { useCallback, type FC } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
-import { Text } from '../../components';
+import { CustomButton, Text } from '../../components';
 import { Strings } from '../../constants';
 import { useTheme } from '../../hooks';
 import styleSheet from './HomeStyles';
 import { CategoryChip } from './sub-components/category-chip';
+import { CategoryChipShimmer } from './sub-components/category-chip-shimmer';
 import { HomeHeader } from './sub-components/home-header';
 import useHome from './useHome';
 import type { Category, Product } from './HomeTypes';
@@ -26,7 +27,10 @@ const HomeScreen: FC = (): React.ReactElement => {
     categories,
     filteredProducts,
     activeCategory,
+    isCategoryLoading,
+    shouldShowCategoryRetry,
     handleCategoryPress,
+    handleRetryCategories,
     renderProductItem,
     keyExtractor
   } = useHome();
@@ -36,7 +40,7 @@ const HomeScreen: FC = (): React.ReactElement => {
       <CategoryChip
         category={category}
         isActive={activeCategory === category.slug}
-        key={category.id}
+        key={category.slug}
         onPress={handleCategoryPress}
       />
     ),
@@ -52,19 +56,45 @@ const HomeScreen: FC = (): React.ReactElement => {
     [styles.emptyContainer, styles.emptyText]
   );
 
+  const renderCategoryStatus = useCallback(() => {
+    if (!shouldShowCategoryRetry) {
+      return null;
+    }
+
+    return (
+      <View style={styles.categoryStatusContainer}>
+        <Text style={styles.categoryStatusText}>{Strings.Home.categoryLoadError}</Text>
+        <CustomButton
+          enableDebounce={false}
+          style={styles.retryButton}
+          title={Strings.Home.retryCategories}
+          variant="outline"
+          onPress={handleRetryCategories}
+        />
+      </View>
+    );
+  }, [
+    handleRetryCategories,
+    shouldShowCategoryRetry,
+    styles.categoryStatusContainer,
+    styles.categoryStatusText,
+    styles.retryButton
+  ]);
+
   return (
     <View style={styles.screen}>
       <HomeHeader />
 
-      <View>
+      <View style={styles.categoryRowContainer}>
         <ScrollView
           horizontal
           contentContainerStyle={styles.chipRow}
           showsHorizontalScrollIndicator={false}
         >
-          {categories.map(renderChip)}
+          {isCategoryLoading ? <CategoryChipShimmer /> : categories.map(renderChip)}
         </ScrollView>
       </View>
+      {renderCategoryStatus()}
       <FlatList<Product>
         removeClippedSubviews
         columnWrapperStyle={styles.columnWrapper}

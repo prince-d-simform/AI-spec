@@ -129,7 +129,7 @@ authorizedAPI.addAsyncRequestTransform(async (request) => {
   // eslint-disable-next-line no-restricted-syntax
   console.log({ request });
 
-  // TODO: You can add authorization token like below
+  // Example: add an authorization token here when authenticated APIs require it.
   // const state = reduxStore?.store?.getState();
   // const authToken = state?.auth?.loginData?.access_token;
   // const token = `Bearer ${authToken}`;
@@ -158,7 +158,7 @@ async function asyncResponseTransform(response: ApiResponse<any>) {
   // eslint-disable-next-line no-restricted-syntax
   console.log({ response });
 
-  // TODO: You can add global condition for token expired or internet issue like below
+  // Example: handle token expiry or connectivity issues globally here when needed.
   // if (response.status === 401) {
   //   AsyncStorage.clear();
   //   reset({ index: 0, routes: [{ name: 'WelcomeScreen' }] });
@@ -183,12 +183,10 @@ function apiWithCancelToken<Response>(
 ): Promise<ApiResponse<Response>> {
   const httpMethod: string = method.toLowerCase();
 
-  const hasData: boolean = ['post', 'put', 'patch'].indexOf(httpMethod) >= 0;
+  const hasData: boolean = ['post', 'put', 'patch'].includes(httpMethod);
   let settings = {
-    ...(setting || {}),
-    headers: {
-      ...(setting?.headers ?? {})
-    },
+    ...setting,
+    ...(setting?.headers ? { headers: setting.headers } : {}),
     ...(!hasData && params ? { params: params } : {})
   };
 
@@ -291,7 +289,7 @@ function processResponseAndCaptureInfo<Response extends ResponseBound>(
   response: ApiErrorResponse<Response>,
   url: string
 ) {
-  const responseClone = _.cloneDeep(response);
+  const responseClone = structuredClone(response);
   responseClone?.config && delete responseClone.config;
   responseClone?.headers && delete responseClone.headers;
   if (response?.originalError?.message !== APIErrorType.USER_CANCELLED_REQUEST)

@@ -3,5 +3,6 @@
  * @type {Object}
  */
 export default Object.freeze({
-  signin: 'auth/signin'
+  signin: 'auth/signin',
+  getProductCategories: 'products/getProductCategories'
 });

@@ -14,8 +14,6 @@
  * - All slug values must be unique and URL-safe (lowercase, hyphenated).
  */
 export interface Category {
-  /** Unique identifier, e.g. 'cat-1' */
-  id: string;
   /** Display label, e.g. 'Electronics' — sourced from Strings.Home.* */
   name: string;
   /**
@@ -42,11 +40,3 @@ export interface Product {
   /** Remote placeholder URL — https://picsum.photos/seed/${id}/400/600 */
   imageUrl: string;
 }
-
-/**
- * Represents the currently selected filter state in useHome.
- *
- * Defaults to 'all' (shows every product).
- * Set to a category slug when a non-All chip is tapped.
- */
-export type ActiveCategoryFilter = string;
