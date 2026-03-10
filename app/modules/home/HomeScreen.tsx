@@ -1,6 +1,6 @@
 import React, { useCallback, type FC } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
-import { CustomButton, Text } from '../../components';
+import { CustomButton, Spinner, Text } from '../../components';
 import { Strings } from '../../constants';
 import { useTheme } from '../../hooks';
 import styleSheet from './HomeStyles';
@@ -27,10 +27,18 @@ const HomeScreen: FC = (): React.ReactElement => {
     categories,
     filteredProducts,
     activeCategory,
+    emptyStateMessage,
+    hasProducts,
     isCategoryLoading,
+    isProductsLoading,
+    isProductsRefreshing,
     shouldShowCategoryRetry,
+    shouldShowProductRetry,
+    shouldShowRefreshError,
     handleCategoryPress,
+    handleRefreshProducts,
     handleRetryCategories,
+    handleRetryProducts,
     renderProductItem,
     keyExtractor
   } = useHome();
@@ -50,10 +58,12 @@ const HomeScreen: FC = (): React.ReactElement => {
   const renderEmptyState = useCallback(
     () => (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>{Strings.Home.emptyState}</Text>
+        <Text style={styles.emptyText}>
+          {emptyStateMessage === 'ALL_EMPTY' ? Strings.Home.emptyStateAll : Strings.Home.emptyState}
+        </Text>
       </View>
     ),
-    [styles.emptyContainer, styles.emptyText]
+    [emptyStateMessage, styles.emptyContainer, styles.emptyText]
   );
 
   const renderCategoryStatus = useCallback(() => {
@@ -81,6 +91,58 @@ const HomeScreen: FC = (): React.ReactElement => {
     styles.retryButton
   ]);
 
+  const renderProductsLoadingState = useCallback(() => {
+    if (!isProductsLoading || hasProducts) {
+      return null;
+    }
+
+    return (
+      <View style={styles.feedbackContainer}>
+        <Spinner />
+        <Text style={styles.feedbackText}>{Strings.Home.productLoading}</Text>
+      </View>
+    );
+  }, [hasProducts, isProductsLoading, styles.feedbackContainer, styles.feedbackText]);
+
+  const renderProductRetryState = useCallback(() => {
+    if (!shouldShowProductRetry) {
+      return null;
+    }
+
+    return (
+      <View style={styles.feedbackContainer}>
+        <Text style={styles.feedbackText}>{Strings.Home.productLoadError}</Text>
+        <CustomButton
+          enableDebounce={false}
+          style={styles.retryButton}
+          title={Strings.Home.retryProducts}
+          variant="outline"
+          onPress={handleRetryProducts}
+        />
+      </View>
+    );
+  }, [
+    handleRetryProducts,
+    shouldShowProductRetry,
+    styles.feedbackContainer,
+    styles.feedbackText,
+    styles.retryButton
+  ]);
+
+  const renderProductStatus = useCallback(() => {
+    if (!shouldShowRefreshError) {
+      return null;
+    }
+
+    return (
+      <View style={styles.productStatusContainer}>
+        <Text style={styles.productStatusText}>{Strings.Home.productRefreshError}</Text>
+      </View>
+    );
+  }, [shouldShowRefreshError, styles.productStatusContainer, styles.productStatusText]);
+
+  const productFeedback = renderProductsLoadingState() || renderProductRetryState();
+
   return (
     <View style={styles.screen}>
       <HomeHeader />
@@ -95,17 +157,25 @@ const HomeScreen: FC = (): React.ReactElement => {
         </ScrollView>
       </View>
       {renderCategoryStatus()}
-      <FlatList<Product>
-        removeClippedSubviews
-        columnWrapperStyle={styles.columnWrapper}
-        contentContainerStyle={styles.grid}
-        data={filteredProducts as Product[]}
-        ListEmptyComponent={renderEmptyState}
-        numColumns={2}
-        windowSize={5}
-        keyExtractor={keyExtractor}
-        renderItem={renderProductItem}
-      />
+      {renderProductStatus()}
+      {productFeedback || (
+        <FlatList<Product>
+          removeClippedSubviews
+          columnWrapperStyle={filteredProducts.length > 0 ? styles.columnWrapper : undefined}
+          contentContainerStyle={[
+            styles.grid,
+            filteredProducts.length === 0 ? styles.gridEmptyContent : undefined
+          ]}
+          data={filteredProducts}
+          ListEmptyComponent={renderEmptyState}
+          numColumns={2}
+          windowSize={5}
+          keyExtractor={keyExtractor}
+          refreshing={isProductsRefreshing}
+          renderItem={renderProductItem}
+          onRefresh={handleRefreshProducts}
+        />
+      )}
     </View>
   );
 };

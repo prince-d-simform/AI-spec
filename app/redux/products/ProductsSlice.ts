@@ -7,12 +7,13 @@ import {
 import { createAsyncThunkWithCancelToken, unauthorizedAPI } from '../../configs';
 import { APIConst, Strings, ToolkitAction } from '../../constants';
 import INITIAL_STATE, { DEFAULT_ALL_CATEGORY, type ProductsStateType } from './ProductsInitial';
-import type { Category } from '../../modules/home';
+import type { Category, Product } from '../../modules/home/HomeTypes';
 import type { ErrorResponse } from '../../types';
 import type {
   ProductCategoryResponse,
   RemoteCategoryRecord
 } from '../../types/ProductCategoryResponse';
+import type { RemoteProductRecord, RemoteProductsResponse } from '../../types/ProductListResponse';
 
 /**
  * Fetches all product categories from the catalog API.
@@ -21,6 +22,16 @@ const getProductCategoriesRequest = createAsyncThunkWithCancelToken<ProductCateg
   ToolkitAction.getProductCategories,
   'GET',
   APIConst.productCategories,
+  unauthorizedAPI
+);
+
+/**
+ * Fetches the full product catalog from the catalog API.
+ */
+const getAllProductsRequest = createAsyncThunkWithCancelToken<RemoteProductsResponse>(
+  ToolkitAction.getAllProducts,
+  'GET',
+  APIConst.products,
   unauthorizedAPI
 );
 
@@ -36,6 +47,16 @@ function formatCategoryNameFromSlug(slug: string): string {
     .filter(Boolean)
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+}
+
+/**
+ * Normalizes a category slug for comparisons and filtering.
+ *
+ * @param {string} slug - The incoming category slug.
+ * @returns {string} The normalized slug.
+ */
+function normalizeCategorySlug(slug: string): string {
+  return slug.trim().toLowerCase();
 }
 
 /**
@@ -61,7 +82,7 @@ function normalizeCategories(records: ProductCategoryResponse): Category[] {
   const seenSlugs = new Set<string>();
 
   records.forEach((record: RemoteCategoryRecord) => {
-    const normalizedSlug = record.slug?.trim().toLowerCase();
+    const normalizedSlug = normalizeCategorySlug(record.slug ?? '');
 
     if (!normalizedSlug || seenSlugs.has(normalizedSlug) || normalizedSlug === 'all') {
       return;
@@ -78,6 +99,88 @@ function normalizeCategories(records: ProductCategoryResponse): Category[] {
   });
 
   return [createAllCategory(), ...normalizedCategories];
+}
+
+/**
+ * Resolves the primary image URL for a product card.
+ *
+ * @param {RemoteProductRecord} record - The remote product item.
+ * @returns {string} The preferred image URL.
+ */
+function getProductImageUrl(record: RemoteProductRecord): string {
+  const thumbnail = record.thumbnail?.trim();
+
+  if (thumbnail) {
+    return thumbnail;
+  }
+
+  return record.images.find((imageUrl) => imageUrl?.trim())?.trim() ?? '';
+}
+
+/**
+ * Normalizes a remote product item into the Home grid product contract.
+ *
+ * @param {RemoteProductRecord} record - The remote product item.
+ * @returns {Product | null} The normalized product or null when invalid.
+ */
+function normalizeProduct(record: RemoteProductRecord): Product | null {
+  const normalizedCategory = normalizeCategorySlug(record.category ?? '');
+  const normalizedTitle = record.title?.trim();
+  const normalizedPrice = Number(record.price);
+  const normalizedRating = Number(record.rating);
+
+  if (
+    !Number.isFinite(record.id) ||
+    !normalizedCategory ||
+    !normalizedTitle ||
+    !Number.isFinite(normalizedPrice) ||
+    !Number.isFinite(normalizedRating)
+  ) {
+    return null;
+  }
+
+  return {
+    category: normalizedCategory,
+    id: String(record.id),
+    imageUrl: getProductImageUrl(record),
+    price: normalizedPrice,
+    rating: normalizedRating,
+    title: normalizedTitle
+  };
+}
+
+/**
+ * Normalizes the full products response for Redux state.
+ *
+ * @param {RemoteProductsResponse} response - The remote catalog response.
+ * @returns {{ products: Product[]; total: number; skip: number; limit: number }} Normalized data.
+ */
+function normalizeProductsResponse(response: RemoteProductsResponse): {
+  limit: number;
+  products: Product[];
+  skip: number;
+  total: number;
+} {
+  const products: Product[] = [];
+  const seenIds = new Set<string>();
+
+  response.products.forEach((record) => {
+    const normalizedProduct = normalizeProduct(record);
+
+    if (!normalizedProduct || seenIds.has(normalizedProduct.id)) {
+      return;
+    }
+
+    seenIds.add(normalizedProduct.id);
+    products.push(normalizedProduct);
+  });
+
+  return {
+    limit: Number.isFinite(response.limit) ? response.limit : products.length,
+    products,
+    skip: Number.isFinite(response.skip) ? response.skip : 0,
+    total: Number.isFinite(response.total) ? response.total : products.length
+  };
 }
 
 /**
@@ -109,11 +212,40 @@ const productsSlice = createSlice({
         state.categories = [createAllCategory()];
       }
     );
+    builder.addCase(getAllProductsRequest.pending, (state: Draft<ProductsStateType>) => {
+      state.isProductsLoading = state.allProducts.length === 0;
+      state.isProductsRefreshing = state.allProducts.length > 0;
+      state.productsError = undefined;
+    });
+    builder.addCase(
+      getAllProductsRequest.fulfilled,
+      (state: Draft<ProductsStateType>, action: PayloadAction<RemoteProductsResponse>) => {
+        const normalizedResponse = normalizeProductsResponse(action.payload);
+
+        state.allProducts = normalizedResponse.products;
+        state.isProductsLoading = false;
+        state.isProductsRefreshing = false;
+        state.limit = normalizedResponse.limit;
+        state.productsError = undefined;
+        state.productsLastUpdated = Date.now();
+        state.skip = normalizedResponse.skip;
+        state.total = normalizedResponse.total;
+      }
+    );
+    builder.addCase(
+      getAllProductsRequest.rejected,
+      (state: Draft<ProductsStateType>, action: PayloadAction<ErrorResponse | undefined>) => {
+        state.isProductsLoading = false;
+        state.isProductsRefreshing = false;
+        state.productsError = action.payload;
+      }
+    );
   }
 });
 
 export const ProductsReducer = productsSlice.reducer;
 export const ProductsActions = {
   ...productsSlice.actions,
+  getAllProductsRequest,
   getProductCategoriesRequest
 };

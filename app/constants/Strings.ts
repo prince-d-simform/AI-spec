@@ -59,9 +59,14 @@ const Home = freezeStringsObject({
   findSomething: I18n.t('home:findSomething'),
   categoryAll: I18n.t('home:categoryAll'),
   categoryLoadError: I18n.t('home:categoryLoadError'),
+  emptyStateAll: I18n.t('home:emptyStateAll'),
   retryCategories: I18n.t('home:retryCategories'),
   emptyState: I18n.t('home:emptyState'),
-  pricePrefix: I18n.t('home:pricePrefix')
+  productLoadError: I18n.t('home:productLoadError'),
+  productLoading: I18n.t('home:productLoading'),
+  productRefreshError: I18n.t('home:productRefreshError'),
+  pricePrefix: I18n.t('home:pricePrefix'),
+  retryProducts: I18n.t('home:retryProducts')
 });
 
 const Details = freezeStringsObject({

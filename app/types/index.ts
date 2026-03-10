@@ -1,3 +1,9 @@
 export * from './UserResponse';
 export * from './ErrorResponse';
-export * from './ProductCategoryResponse';
+export type {
+  RemoteProductDimensions,
+  RemoteProductMeta,
+  RemoteProductRecord,
+  RemoteProductReview,
+  RemoteProductsResponse
+} from './ProductListResponse';

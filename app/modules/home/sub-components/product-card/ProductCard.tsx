@@ -20,6 +20,7 @@ import type { ProductCardProps } from './ProductCardTypes';
 const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => {
   const { styles } = useTheme(styleSheet);
   const [imageError, setImageError] = useState(false);
+  const shouldShowImagePlaceholder = imageError || !product.imageUrl.trim();
 
   const handleImageError = useCallback(() => {
     setImageError(true);
@@ -27,7 +28,7 @@ const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => 
 
   return (
     <View style={styles.card}>
-      {imageError ? (
+      {shouldShowImagePlaceholder ? (
         <View style={styles.imagePlaceholder} />
       ) : (
         <Image
