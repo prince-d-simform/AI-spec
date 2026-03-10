@@ -8,14 +8,23 @@ import type { ErrorResponse } from '../../types';
 export interface ProductsStateType {
   allProducts: Product[];
   categories: Category[];
+  productsByCategory: Product[];
   isLoading: boolean;
+  isCategoryProductsLoading: boolean;
   isProductsLoading: boolean;
   isProductsRefreshing: boolean;
+  categoryProductsError?: ErrorResponse;
+  categoryProductsLastUpdated?: number;
+  categoryProductsLimit?: number;
+  categoryProductsRequestId?: string;
+  categoryProductsSkip?: number;
+  categoryProductsTotal?: number;
   error?: ErrorResponse;
   lastUpdated?: number;
   limit?: number;
   productsError?: ErrorResponse;
   productsLastUpdated?: number;
+  selectedCategorySlug?: string;
   skip?: number;
   total?: number;
 }
@@ -39,14 +48,23 @@ export const DEFAULT_CATEGORIES: Category[] = [DEFAULT_ALL_CATEGORY];
 const INITIAL_STATE: ProductsStateType = {
   allProducts: [],
   categories: DEFAULT_CATEGORIES,
+  productsByCategory: [],
   isLoading: false,
+  isCategoryProductsLoading: false,
   isProductsLoading: false,
   isProductsRefreshing: false,
+  categoryProductsError: undefined,
+  categoryProductsLastUpdated: undefined,
+  categoryProductsLimit: undefined,
+  categoryProductsRequestId: undefined,
+  categoryProductsSkip: undefined,
+  categoryProductsTotal: undefined,
   error: undefined,
   lastUpdated: undefined,
   limit: undefined,
   productsError: undefined,
   productsLastUpdated: undefined,
+  selectedCategorySlug: undefined,
   skip: undefined,
   total: undefined
 };

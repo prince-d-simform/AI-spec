@@ -30,13 +30,16 @@ const HomeScreen: FC = (): React.ReactElement => {
     emptyStateMessage,
     hasProducts,
     isCategoryLoading,
+    isCategoryProductsLoading,
     isProductsLoading,
     isProductsRefreshing,
     shouldShowCategoryRetry,
+    shouldShowCategoryProductsRetry,
     shouldShowProductRetry,
     shouldShowRefreshError,
     handleCategoryPress,
     handleRefreshProducts,
+    handleRetryCategoryProducts,
     handleRetryCategories,
     handleRetryProducts,
     renderProductItem,
@@ -92,7 +95,7 @@ const HomeScreen: FC = (): React.ReactElement => {
   ]);
 
   const renderProductsLoadingState = useCallback(() => {
-    if (!isProductsLoading || hasProducts) {
+    if (activeCategory !== 'all' || !isProductsLoading || hasProducts) {
       return null;
     }
 
@@ -102,10 +105,29 @@ const HomeScreen: FC = (): React.ReactElement => {
         <Text style={styles.feedbackText}>{Strings.Home.productLoading}</Text>
       </View>
     );
-  }, [hasProducts, isProductsLoading, styles.feedbackContainer, styles.feedbackText]);
+  }, [
+    activeCategory,
+    hasProducts,
+    isProductsLoading,
+    styles.feedbackContainer,
+    styles.feedbackText
+  ]);
+
+  const renderCategoryProductsLoadingState = useCallback(() => {
+    if (activeCategory === 'all' || !isCategoryProductsLoading) {
+      return null;
+    }
+
+    return (
+      <View style={styles.feedbackContainer}>
+        <Spinner />
+        <Text style={styles.feedbackText}>{Strings.Home.categoryProductsLoading}</Text>
+      </View>
+    );
+  }, [activeCategory, isCategoryProductsLoading, styles.feedbackContainer, styles.feedbackText]);
 
   const renderProductRetryState = useCallback(() => {
-    if (!shouldShowProductRetry) {
+    if (activeCategory !== 'all' || !shouldShowProductRetry) {
       return null;
     }
 
@@ -122,8 +144,35 @@ const HomeScreen: FC = (): React.ReactElement => {
       </View>
     );
   }, [
+    activeCategory,
     handleRetryProducts,
     shouldShowProductRetry,
+    styles.feedbackContainer,
+    styles.feedbackText,
+    styles.retryButton
+  ]);
+
+  const renderCategoryProductRetryState = useCallback(() => {
+    if (activeCategory === 'all' || !shouldShowCategoryProductsRetry) {
+      return null;
+    }
+
+    return (
+      <View style={styles.feedbackContainer}>
+        <Text style={styles.feedbackText}>{Strings.Home.categoryProductsLoadError}</Text>
+        <CustomButton
+          enableDebounce={false}
+          style={styles.retryButton}
+          title={Strings.Home.retryCategoryProducts}
+          variant="outline"
+          onPress={handleRetryCategoryProducts}
+        />
+      </View>
+    );
+  }, [
+    activeCategory,
+    handleRetryCategoryProducts,
+    shouldShowCategoryProductsRetry,
     styles.feedbackContainer,
     styles.feedbackText,
     styles.retryButton
@@ -141,7 +190,11 @@ const HomeScreen: FC = (): React.ReactElement => {
     );
   }, [shouldShowRefreshError, styles.productStatusContainer, styles.productStatusText]);
 
-  const productFeedback = renderProductsLoadingState() || renderProductRetryState();
+  const productFeedback =
+    renderCategoryProductsLoadingState() ||
+    renderCategoryProductRetryState() ||
+    renderProductsLoadingState() ||
+    renderProductRetryState();
 
   return (
     <View style={styles.screen}>
@@ -171,9 +224,9 @@ const HomeScreen: FC = (): React.ReactElement => {
           numColumns={2}
           windowSize={5}
           keyExtractor={keyExtractor}
-          refreshing={isProductsRefreshing}
+          refreshing={activeCategory === 'all' ? isProductsRefreshing : false}
           renderItem={renderProductItem}
-          onRefresh={handleRefreshProducts}
+          onRefresh={activeCategory === 'all' ? handleRefreshProducts : undefined}
         />
       )}
     </View>

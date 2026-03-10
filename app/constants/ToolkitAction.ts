@@ -5,5 +5,6 @@
 export default Object.freeze({
   signin: 'auth/signin',
   getAllProducts: 'products/getAllProducts',
+  getCategoryProducts: 'products/getCategoryProducts',
   getProductCategories: 'products/getProductCategories'
 });

@@ -25,6 +25,7 @@ export interface Category {
 
 /**
  * Represents a single item in the product catalog.
+ * Reused for both full-catalog and selected-category remote responses.
  */
 export interface Product {
   /** Unique identifier — also used as the FlatList key */

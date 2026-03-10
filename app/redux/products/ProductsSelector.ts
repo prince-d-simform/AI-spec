@@ -11,6 +11,11 @@ interface ProductsSelectorsType {
   getCategories: (state: RootStateType) => Category[];
   getLoading: (state: RootStateType) => boolean;
   getAllProducts: (state: RootStateType) => Product[];
+  getProductsByCategory: (state: RootStateType) => Product[];
+  getSelectedCategorySlug: (state: RootStateType) => string | undefined;
+  getCategoryProductsError: (state: RootStateType) => ErrorResponse | undefined;
+  getCategoryProductsLastUpdated: (state: RootStateType) => number | undefined;
+  getCategoryProductsLoading: (state: RootStateType) => boolean;
   getError: (state: RootStateType) => ErrorResponse | undefined;
   getProductsError: (state: RootStateType) => ErrorResponse | undefined;
   getProductsLastUpdated: (state: RootStateType) => number | undefined;
@@ -34,6 +39,16 @@ const ProductsSelectors: ProductsSelectorsType = {
   getProducts: (state: RootStateType): ProductsStateType => getProductsState(state),
   getAllProducts: (state: RootStateType): Product[] => getProductsState(state).allProducts,
   getCategories: (state: RootStateType): Category[] => getProductsState(state).categories,
+  getProductsByCategory: (state: RootStateType): Product[] =>
+    getProductsState(state).productsByCategory,
+  getSelectedCategorySlug: (state: RootStateType): string | undefined =>
+    getProductsState(state).selectedCategorySlug,
+  getCategoryProductsError: (state: RootStateType): ErrorResponse | undefined =>
+    getProductsState(state).categoryProductsError,
+  getCategoryProductsLastUpdated: (state: RootStateType): number | undefined =>
+    getProductsState(state).categoryProductsLastUpdated,
+  getCategoryProductsLoading: (state: RootStateType): boolean =>
+    getProductsState(state).isCategoryProductsLoading,
   getLoading: (state: RootStateType): boolean => getProductsState(state).isLoading,
   getError: (state: RootStateType): ErrorResponse | undefined => getProductsState(state).error,
   getProductsError: (state: RootStateType): ErrorResponse | undefined =>
