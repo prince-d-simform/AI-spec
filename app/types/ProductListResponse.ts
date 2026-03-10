@@ -71,3 +71,10 @@ export interface RemoteProductsResponse {
  * Successful response payload for the category-products endpoint.
  */
 export interface RemoteCategoryProductsResponse extends RemoteProductsResponse {}
+
+/**
+ * Successful response payload for the product-detail endpoint.
+ */
+export interface RemoteProductDetailResponse extends RemoteProductRecord {
+  message?: string;
+}

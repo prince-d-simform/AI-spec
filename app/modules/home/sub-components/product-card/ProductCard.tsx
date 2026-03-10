@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, Pressable, View } from 'react-native';
 import { Text } from '../../../../components';
 import { Strings } from '../../../../constants';
 import { useTheme } from '../../../../hooks';
@@ -17,7 +17,7 @@ import type { ProductCardProps } from './ProductCardTypes';
  *
  * Wrapped in React.memo — only re-renders when product prop changes.
  */
-const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => {
+const ProductCard = memo(({ product, onPress }: ProductCardProps): React.ReactElement => {
   const { styles } = useTheme(styleSheet);
   const [imageError, setImageError] = useState(false);
   const shouldShowImagePlaceholder = imageError || !product.imageUrl.trim();
@@ -30,8 +30,12 @@ const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => 
     setImageError(true);
   }, []);
 
+  const handlePress = useCallback(() => {
+    onPress?.(product.id);
+  }, [onPress, product.id]);
+
   return (
-    <View style={styles.card}>
+    <Pressable accessibilityRole="button" style={styles.card} onPress={handlePress}>
       {shouldShowImagePlaceholder ? (
         <View style={styles.imagePlaceholder} />
       ) : (
@@ -58,7 +62,7 @@ const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => 
           <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 });
 

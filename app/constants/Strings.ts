@@ -73,7 +73,43 @@ const Home = freezeStringsObject({
 });
 
 const Details = freezeStringsObject({
-  detailsScreenTitle: I18n.t('details:title')
+  detailsScreenTitle: I18n.t('details:title'),
+  loadingTitle: I18n.t('details:loadingTitle'),
+  loadingMessage: I18n.t('details:loadingMessage'),
+  errorTitle: I18n.t('details:errorTitle'),
+  errorMessage: I18n.t('details:errorMessage'),
+  unavailableTitle: I18n.t('details:unavailableTitle'),
+  unavailableMessage: I18n.t('details:unavailableMessage'),
+  retryButton: I18n.t('details:retryButton'),
+  backButton: I18n.t('details:backButton'),
+  descriptionTitle: I18n.t('details:descriptionTitle'),
+  tagsTitle: I18n.t('details:tagsTitle'),
+  fulfillmentTitle: I18n.t('details:fulfillmentTitle'),
+  specificationsTitle: I18n.t('details:specificationsTitle'),
+  reviewsTitle: I18n.t('details:reviewsTitle'),
+  metadataTitle: I18n.t('details:metadataTitle'),
+  brandLabel: I18n.t('details:brandLabel'),
+  categoryLabel: I18n.t('details:categoryLabel'),
+  skuLabel: I18n.t('details:skuLabel'),
+  stockLabel: I18n.t('details:stockLabel'),
+  availabilityLabel: I18n.t('details:availabilityLabel'),
+  discountLabel: I18n.t('details:discountLabel'),
+  ratingLabel: I18n.t('details:ratingLabel'),
+  weightLabel: I18n.t('details:weightLabel'),
+  minimumOrderQuantityLabel: I18n.t('details:minimumOrderQuantityLabel'),
+  shippingLabel: I18n.t('details:shippingLabel'),
+  warrantyLabel: I18n.t('details:warrantyLabel'),
+  returnPolicyLabel: I18n.t('details:returnPolicyLabel'),
+  widthLabel: I18n.t('details:widthLabel'),
+  heightLabel: I18n.t('details:heightLabel'),
+  depthLabel: I18n.t('details:depthLabel'),
+  createdAtLabel: I18n.t('details:createdAtLabel'),
+  updatedAtLabel: I18n.t('details:updatedAtLabel'),
+  barcodeLabel: I18n.t('details:barcodeLabel'),
+  qrCodeLabel: I18n.t('details:qrCodeLabel'),
+  imageUnavailable: I18n.t('details:imageUnavailable'),
+  noReviews: I18n.t('details:noReviews'),
+  discountSuffix: I18n.t('details:discountSuffix')
 });
 
 const Auth = freezeStringsObject({

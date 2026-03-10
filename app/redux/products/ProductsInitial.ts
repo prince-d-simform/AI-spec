@@ -1,4 +1,5 @@
 import { Strings } from '../../constants';
+import type { ProductDetail } from '../../modules/details';
 import type { Category, Product } from '../../modules/home/HomeTypes';
 import type { ErrorResponse } from '../../types';
 
@@ -11,6 +12,7 @@ export interface ProductsStateType {
   productsByCategory: Product[];
   isLoading: boolean;
   isCategoryProductsLoading: boolean;
+  isProductDetailLoading: boolean;
   isProductsLoading: boolean;
   isProductsRefreshing: boolean;
   categoryProductsError?: ErrorResponse;
@@ -19,12 +21,18 @@ export interface ProductsStateType {
   categoryProductsRequestId?: string;
   categoryProductsSkip?: number;
   categoryProductsTotal?: number;
+  productDetailError?: ErrorResponse;
+  productDetailLastUpdated?: number;
+  productDetailRequestId?: string;
+  productDetailUnavailable?: boolean;
   error?: ErrorResponse;
   lastUpdated?: number;
   limit?: number;
   productsError?: ErrorResponse;
   productsLastUpdated?: number;
   selectedCategorySlug?: string;
+  selectedProductDetail?: ProductDetail;
+  selectedProductId?: string;
   skip?: number;
   total?: number;
 }
@@ -51,6 +59,7 @@ const INITIAL_STATE: ProductsStateType = {
   productsByCategory: [],
   isLoading: false,
   isCategoryProductsLoading: false,
+  isProductDetailLoading: false,
   isProductsLoading: false,
   isProductsRefreshing: false,
   categoryProductsError: undefined,
@@ -59,12 +68,18 @@ const INITIAL_STATE: ProductsStateType = {
   categoryProductsRequestId: undefined,
   categoryProductsSkip: undefined,
   categoryProductsTotal: undefined,
+  productDetailError: undefined,
+  productDetailLastUpdated: undefined,
+  productDetailRequestId: undefined,
+  productDetailUnavailable: false,
   error: undefined,
   lastUpdated: undefined,
   limit: undefined,
   productsError: undefined,
   productsLastUpdated: undefined,
   selectedCategorySlug: undefined,
+  selectedProductDetail: undefined,
+  selectedProductId: undefined,
   skip: undefined,
   total: undefined
 };
