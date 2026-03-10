@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Image, View } from 'react-native';
 import { Text } from '../../../../components';
 import { Strings } from '../../../../constants';
@@ -21,6 +21,10 @@ const ProductCard = memo(({ product }: ProductCardProps): React.ReactElement => 
   const { styles } = useTheme(styleSheet);
   const [imageError, setImageError] = useState(false);
   const shouldShowImagePlaceholder = imageError || !product.imageUrl.trim();
+
+  useEffect(() => {
+    setImageError(false);
+  }, [product.imageUrl]);
 
   const handleImageError = useCallback(() => {
     setImageError(true);

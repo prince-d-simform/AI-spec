@@ -13,7 +13,11 @@ import type {
   ProductCategoryResponse,
   RemoteCategoryRecord
 } from '../../types/ProductCategoryResponse';
-import type { RemoteProductRecord, RemoteProductsResponse } from '../../types/ProductListResponse';
+import type {
+  RemoteCategoryProductsResponse,
+  RemoteProductRecord,
+  RemoteProductsResponse
+} from '../../types/ProductListResponse';
 
 /**
  * Fetches all product categories from the catalog API.
@@ -32,6 +36,16 @@ const getAllProductsRequest = createAsyncThunkWithCancelToken<RemoteProductsResp
   ToolkitAction.getAllProducts,
   'GET',
   APIConst.products,
+  unauthorizedAPI
+);
+
+/**
+ * Fetches the selected category product catalog from the catalog API.
+ */
+const getCategoryProductsRequest = createAsyncThunkWithCancelToken<RemoteCategoryProductsResponse>(
+  ToolkitAction.getCategoryProducts,
+  'GET',
+  APIConst.productsByCategory,
   unauthorizedAPI
 );
 
@@ -184,12 +198,34 @@ function normalizeProductsResponse(response: RemoteProductsResponse): {
 }
 
 /**
+ * Clears selected-category product state.
+ *
+ * @param {Draft<ProductsStateType>} state - The draft products state.
+ * @returns {void}
+ */
+function clearCategoryProductsStateReducer(state: Draft<ProductsStateType>): void {
+  state.productsByCategory = [];
+  state.isCategoryProductsLoading = false;
+  state.categoryProductsError = undefined;
+  state.categoryProductsLastUpdated = undefined;
+  state.categoryProductsLimit = undefined;
+  state.categoryProductsRequestId = undefined;
+  state.categoryProductsSkip = undefined;
+  state.categoryProductsTotal = undefined;
+  state.selectedCategorySlug = undefined;
+}
+
+/**
  * Creates the products slice for category loading.
  */
 const productsSlice = createSlice({
   name: 'products',
   initialState: INITIAL_STATE,
-  reducers: {},
+  reducers: {
+    clearCategoryProductsState: (state: Draft<ProductsStateType>) => {
+      clearCategoryProductsStateReducer(state);
+    }
+  },
   extraReducers: (builder: ActionReducerMapBuilder<ProductsStateType>) => {
     builder.addCase(getProductCategoriesRequest.pending, (state: Draft<ProductsStateType>) => {
       state.isLoading = true;
@@ -240,6 +276,54 @@ const productsSlice = createSlice({
         state.productsError = action.payload;
       }
     );
+    builder.addCase(
+      getCategoryProductsRequest.pending,
+      (state: Draft<ProductsStateType>, action) => {
+        state.productsByCategory = [];
+        state.isCategoryProductsLoading = true;
+        state.categoryProductsError = undefined;
+        state.categoryProductsLastUpdated = undefined;
+        state.categoryProductsLimit = undefined;
+        state.categoryProductsRequestId = action.meta.requestId;
+        state.categoryProductsSkip = undefined;
+        state.categoryProductsTotal = undefined;
+        state.selectedCategorySlug = normalizeCategorySlug(action.meta.arg.paths?.slug ?? '');
+      }
+    );
+    builder.addCase(
+      getCategoryProductsRequest.fulfilled,
+      (state: Draft<ProductsStateType>, action) => {
+        if (action.meta.requestId !== state.categoryProductsRequestId) {
+          return;
+        }
+
+        const normalizedResponse = normalizeProductsResponse(action.payload);
+
+        state.productsByCategory = normalizedResponse.products;
+        state.isCategoryProductsLoading = false;
+        state.categoryProductsError = undefined;
+        state.categoryProductsLastUpdated = Date.now();
+        state.categoryProductsLimit = normalizedResponse.limit;
+        state.categoryProductsSkip = normalizedResponse.skip;
+        state.categoryProductsTotal = normalizedResponse.total;
+      }
+    );
+    builder.addCase(
+      getCategoryProductsRequest.rejected,
+      (state: Draft<ProductsStateType>, action) => {
+        if (action.meta.requestId !== state.categoryProductsRequestId) {
+          return;
+        }
+
+        state.productsByCategory = [];
+        state.isCategoryProductsLoading = false;
+        state.categoryProductsError = action.payload;
+        state.categoryProductsLastUpdated = undefined;
+        state.categoryProductsLimit = undefined;
+        state.categoryProductsSkip = undefined;
+        state.categoryProductsTotal = undefined;
+      }
+    );
   }
 });
 
@@ -247,5 +331,6 @@ export const ProductsReducer = productsSlice.reducer;
 export const ProductsActions = {
   ...productsSlice.actions,
   getAllProductsRequest,
+  getCategoryProductsRequest,
   getProductCategoriesRequest
 };

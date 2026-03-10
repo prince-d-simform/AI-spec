@@ -66,3 +66,8 @@ export interface RemoteProductsResponse {
   skip: number;
   total: number;
 }
+
+/**
+ * Successful response payload for the category-products endpoint.
+ */
+export interface RemoteCategoryProductsResponse extends RemoteProductsResponse {}

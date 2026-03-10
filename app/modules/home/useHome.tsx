@@ -5,7 +5,10 @@ import { useAppDispatch, useAppSelector } from '../../redux/useRedux';
 import { ProductCard } from './sub-components/product-card';
 import type { Category, Product } from './HomeTypes';
 import type { ProductCategoryResponse } from '../../types/ProductCategoryResponse';
-import type { RemoteProductsResponse } from '../../types/ProductListResponse';
+import type {
+  RemoteCategoryProductsResponse,
+  RemoteProductsResponse
+} from '../../types/ProductListResponse';
 
 /**
  * Return type for the useHome hook.
@@ -27,16 +30,22 @@ export interface UseHomeReturn {
   isProductsLoading: boolean;
   /** Pull-to-refresh loading state. */
   isProductsRefreshing: boolean;
+  /** Selected-category loading state. */
+  isCategoryProductsLoading: boolean;
   /** Whether retry/error UI should be shown for category loading. */
   shouldShowCategoryRetry: boolean;
   /** Whether a blocking retry should be shown for the first product load failure. */
   shouldShowProductRetry: boolean;
+  /** Whether a blocking retry should be shown for selected-category failure. */
+  shouldShowCategoryProductsRetry: boolean;
   /** Whether non-blocking refresh failure feedback should be shown. */
   shouldShowRefreshError: boolean;
   /** Stable callback — sets the active category slug */
   handleCategoryPress: (slug: string) => void;
   /** Stable callback — retries product loading */
   handleRetryProducts: () => void;
+  /** Stable callback — retries selected-category loading. */
+  handleRetryCategoryProducts: () => void;
   /** Stable callback — refreshes the product catalog */
   handleRefreshProducts: () => void;
   /** Stable callback — retries category loading */
@@ -57,14 +66,20 @@ const useHome = (): UseHomeReturn => {
   const dispatch = useAppDispatch();
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const refCategoriesDispatch = useRef<APIDispatch<ProductCategoryResponse> | null>(null);
+  const refCategoryProductsDispatch = useRef<APIDispatch<RemoteCategoryProductsResponse> | null>(
+    null
+  );
   const refProductsDispatch = useRef<APIDispatch<RemoteProductsResponse> | null>(null);
 
   const allProducts = useAppSelector(ProductsSelectors.getAllProducts);
   const categories = useAppSelector(ProductsSelectors.getCategories);
+  const productsByCategory = useAppSelector(ProductsSelectors.getProductsByCategory);
   const isCategoryLoading = useAppSelector(ProductsSelectors.getLoading);
+  const isCategoryProductsLoading = useAppSelector(ProductsSelectors.getCategoryProductsLoading);
   const isProductsLoading = useAppSelector(ProductsSelectors.getProductsLoading);
   const isProductsRefreshing = useAppSelector(ProductsSelectors.getProductsRefreshing);
   const categoryError = useAppSelector(ProductsSelectors.getError);
+  const categoryProductsError = useAppSelector(ProductsSelectors.getCategoryProductsError);
   const productsError = useAppSelector(ProductsSelectors.getProductsError);
   const productsLastUpdated = useAppSelector(ProductsSelectors.getProductsLastUpdated);
 
@@ -82,6 +97,25 @@ const useHome = (): UseHomeReturn => {
     );
   }, [dispatch]);
 
+  const handleFetchCategoryProducts = useCallback(
+    (slug: string): void => {
+      if (!slug || slug === 'all') {
+        dispatch(ProductsActions.clearCategoryProductsState());
+        refCategoryProductsDispatch.current?.abort();
+        return;
+      }
+
+      refCategoryProductsDispatch.current?.abort();
+      refCategoryProductsDispatch.current = dispatch(
+        ProductsActions.getCategoryProductsRequest({
+          paths: { slug },
+          shouldShowToast: false
+        })
+      );
+    },
+    [dispatch]
+  );
+
   useEffect(() => {
     handleFetchCategories();
 
@@ -91,6 +125,7 @@ const useHome = (): UseHomeReturn => {
 
     return () => {
       refCategoriesDispatch.current?.abort();
+      refCategoryProductsDispatch.current?.abort();
       refProductsDispatch.current?.abort();
     };
   }, [allProducts.length, handleFetchCategories, handleFetchProducts, productsLastUpdated]);
@@ -99,16 +134,15 @@ const useHome = (): UseHomeReturn => {
     const hasActiveCategory = categories.some((category) => category.slug === activeCategory);
 
     if (!hasActiveCategory) {
+      dispatch(ProductsActions.clearCategoryProductsState());
+      refCategoryProductsDispatch.current?.abort();
       setActiveCategory('all');
     }
-  }, [activeCategory, categories]);
+  }, [activeCategory, categories, dispatch]);
 
   const filteredProducts = useMemo<readonly Product[]>(
-    () =>
-      activeCategory === 'all'
-        ? allProducts
-        : allProducts.filter((product) => product.category === activeCategory),
-    [activeCategory, allProducts]
+    () => (activeCategory === 'all' ? allProducts : productsByCategory),
+    [activeCategory, allProducts, productsByCategory]
   );
 
   const emptyStateMessage = useMemo<string>(
@@ -116,13 +150,32 @@ const useHome = (): UseHomeReturn => {
     [activeCategory]
   );
 
-  const handleCategoryPress = useCallback((slug: string): void => {
-    setActiveCategory(slug);
-  }, []);
+  const handleCategoryPress = useCallback(
+    (slug: string): void => {
+      setActiveCategory(slug);
+
+      if (slug === 'all') {
+        dispatch(ProductsActions.clearCategoryProductsState());
+        refCategoryProductsDispatch.current?.abort();
+        return;
+      }
+
+      handleFetchCategoryProducts(slug);
+    },
+    [dispatch, handleFetchCategoryProducts]
+  );
 
   const handleRetryProducts = useCallback((): void => {
     handleFetchProducts();
   }, [handleFetchProducts]);
+
+  const handleRetryCategoryProducts = useCallback((): void => {
+    if (activeCategory === 'all') {
+      return;
+    }
+
+    handleFetchCategoryProducts(activeCategory);
+  }, [activeCategory, handleFetchCategoryProducts]);
 
   const handleRefreshProducts = useCallback((): void => {
     if (isProductsLoading || isProductsRefreshing) {
@@ -147,6 +200,15 @@ const useHome = (): UseHomeReturn => {
     [allProducts.length, isProductsLoading, isProductsRefreshing, productsError]
   );
 
+  const shouldShowCategoryProductsRetry = useMemo<boolean>(
+    () =>
+      activeCategory !== 'all' &&
+      !isCategoryProductsLoading &&
+      !!categoryProductsError &&
+      productsByCategory.length === 0,
+    [activeCategory, categoryProductsError, isCategoryProductsLoading, productsByCategory.length]
+  );
+
   const shouldShowRefreshError = useMemo<boolean>(
     () => !isProductsRefreshing && !!productsError && allProducts.length > 0,
     [allProducts.length, isProductsRefreshing, productsError]
@@ -161,19 +223,22 @@ const useHome = (): UseHomeReturn => {
 
   return {
     categories,
-    hasProducts: allProducts.length > 0,
+    hasProducts: filteredProducts.length > 0,
     filteredProducts,
     activeCategory,
     emptyStateMessage,
     isCategoryLoading,
+    isCategoryProductsLoading,
     isProductsLoading,
     isProductsRefreshing,
     shouldShowCategoryRetry,
+    shouldShowCategoryProductsRetry,
     shouldShowProductRetry,
     shouldShowRefreshError,
     handleCategoryPress,
     handleRefreshProducts,
     handleRetryCategories,
+    handleRetryCategoryProducts,
     handleRetryProducts,
     renderProductItem,
     keyExtractor
