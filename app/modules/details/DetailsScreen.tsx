@@ -1,8 +1,10 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { useCallback, type FC } from 'react';
 import { Image, Pressable, ScrollView, View } from 'react-native';
-import { CustomButton, Spinner, Text } from '../../components';
+import { CustomButton, CustomHeader, Spinner, Text } from '../../components';
 import { Strings } from '../../constants';
 import { useTheme } from '../../hooks';
+import { scale } from '../../theme';
 import styleSheet from './DetailsStyles';
 import useDetails from './useDetails';
 
@@ -46,6 +48,32 @@ const DetailScreen: FC = (): React.ReactElement => {
     handleBackPress
   } = useDetails();
 
+  const renderHeader = useCallback(
+    () => (
+      <CustomHeader
+        customLeftView={
+          <Pressable
+            accessibilityLabel={Strings.Details.backButton}
+            accessibilityRole="button"
+            hitSlop={scale(8)}
+            style={styles.headerActionButton}
+            onPress={handleBackPress}
+          >
+            <Ionicons color={styles.headerActionIcon.color} name="arrow-back" size={scale(20)} />
+          </Pressable>
+        }
+        customRightView={<View style={styles.headerRightSpacer} />}
+        title={Strings.Details.detailsScreenTitle}
+      />
+    ),
+    [
+      handleBackPress,
+      styles.headerActionButton,
+      styles.headerActionIcon.color,
+      styles.headerRightSpacer
+    ]
+  );
+
   const renderStateActions = useCallback(
     () => (
       <View style={styles.stateActions}>
@@ -79,36 +107,46 @@ const DetailScreen: FC = (): React.ReactElement => {
 
   if (isProductDetailLoading) {
     return (
-      <View style={styles.centeredState}>
-        <Spinner />
-        <Text style={styles.stateTitle}>{Strings.Details.loadingTitle}</Text>
-        <Text style={styles.stateMessage}>{Strings.Details.loadingMessage}</Text>
+      <View style={styles.screenView}>
+        {renderHeader()}
+        <View style={styles.centeredState}>
+          <Spinner />
+          <Text style={styles.stateTitle}>{Strings.Details.loadingTitle}</Text>
+          <Text style={styles.stateMessage}>{Strings.Details.loadingMessage}</Text>
+        </View>
       </View>
     );
   }
 
   if (isProductDetailUnavailable) {
     return (
-      <View style={styles.centeredState}>
-        <Text style={styles.stateTitle}>{Strings.Details.unavailableTitle}</Text>
-        <Text style={styles.stateMessage}>{Strings.Details.unavailableMessage}</Text>
-        {renderStateActions()}
+      <View style={styles.screenView}>
+        {renderHeader()}
+        <View style={styles.centeredState}>
+          <Text style={styles.stateTitle}>{Strings.Details.unavailableTitle}</Text>
+          <Text style={styles.stateMessage}>{Strings.Details.unavailableMessage}</Text>
+          {renderStateActions()}
+        </View>
       </View>
     );
   }
 
   if (shouldShowProductDetailError || !productDetail) {
     return (
-      <View style={styles.centeredState}>
-        <Text style={styles.stateTitle}>{Strings.Details.errorTitle}</Text>
-        <Text style={styles.stateMessage}>{productDetailErrorMessage}</Text>
-        {renderStateActions()}
+      <View style={styles.screenView}>
+        {renderHeader()}
+        <View style={styles.centeredState}>
+          <Text style={styles.stateTitle}>{Strings.Details.errorTitle}</Text>
+          <Text style={styles.stateMessage}>{productDetailErrorMessage}</Text>
+          {renderStateActions()}
+        </View>
       </View>
     );
   }
 
   return (
     <View style={styles.screenView}>
+      {renderHeader()}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         <View style={styles.heroCard}>
           {selectedImageUrl ? (
@@ -270,14 +308,6 @@ const DetailScreen: FC = (): React.ReactElement => {
             {renderDetailRow(Strings.Details.qrCodeLabel, productDetail.meta.qrCode)}
           </View>
         ) : null}
-
-        <CustomButton
-          enableDebounce={false}
-          style={styles.footerButton}
-          title={Strings.Details.backButton}
-          variant="outline"
-          onPress={handleBackPress}
-        />
       </ScrollView>
     </View>
   );

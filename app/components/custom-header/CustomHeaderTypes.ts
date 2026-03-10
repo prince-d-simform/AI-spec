@@ -1,5 +1,5 @@
 import React from 'react';
-import { type TextStyle } from 'react-native';
+import { type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 
 /**
  * A type for the props of the header component.
@@ -10,11 +10,12 @@ import { type TextStyle } from 'react-native';
  * @property {boolean} isBottomLine - A bottom line is displayed or not.
  */
 export interface CustomHeaderPropsType {
-  customLeftView: React.ReactElement;
-  customRightView: React.ReactElement;
-  title: string;
-  titleStyle: TextStyle;
-  isBottomLine: boolean;
+  customLeftView?: React.ReactElement | null;
+  customRightView?: React.ReactElement | null;
+  title?: string;
+  titleStyle?: StyleProp<TextStyle>;
+  isBottomLine?: boolean;
+  containerStyle?: StyleProp<ViewStyle>;
 }
 
 export const defaultProps = {

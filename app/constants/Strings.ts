@@ -72,6 +72,18 @@ const Home = freezeStringsObject({
   retryProducts: I18n.t('home:retryProducts')
 });
 
+const Tabs = freezeStringsObject({
+  homeLabel: I18n.t('tabs:homeLabel'),
+  cartLabel: I18n.t('tabs:cartLabel'),
+  profileLabel: I18n.t('tabs:profileLabel')
+});
+
+const Cart = freezeStringsObject({
+  screenTitle: I18n.t('cart:screenTitle'),
+  emptyTitle: I18n.t('cart:emptyTitle'),
+  emptyMessage: I18n.t('cart:emptyMessage')
+});
+
 const Details = freezeStringsObject({
   detailsScreenTitle: I18n.t('details:title'),
   loadingTitle: I18n.t('details:loadingTitle'),
@@ -112,6 +124,12 @@ const Details = freezeStringsObject({
   discountSuffix: I18n.t('details:discountSuffix')
 });
 
+const Profile = freezeStringsObject({
+  screenTitle: I18n.t('profile:screenTitle'),
+  emptyTitle: I18n.t('profile:emptyTitle'),
+  emptyMessage: I18n.t('profile:emptyMessage')
+});
+
 const Auth = freezeStringsObject({
   hintEmail: I18n.t('auth:hintEmail'),
   hintPassword: I18n.t('auth:hintPassword'),
@@ -128,6 +146,9 @@ export default Object.freeze({
   APIError,
   YupError,
   Home,
+  Tabs,
+  Cart,
   Details,
+  Profile,
   Auth
 });

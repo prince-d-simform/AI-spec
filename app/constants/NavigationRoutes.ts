@@ -4,6 +4,8 @@
 export enum ROUTES {
   RootMain = 'Main',
   Home = 'Home',
+  Cart = 'Cart',
+  Profile = 'Profile',
   Details = 'Details',
   SignIn = 'SignIn',
   NotFound = 'NotFound'

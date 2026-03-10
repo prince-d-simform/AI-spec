@@ -21,6 +21,16 @@
     "retryProducts": "Retry Products",
     "pricePrefix": "$"
   },
+  "tabs": {
+    "homeLabel": "Home",
+    "cartLabel": "Cart",
+    "profileLabel": "Profile"
+  },
+  "cart": {
+    "screenTitle": "Cart",
+    "emptyTitle": "Your cart is waiting",
+    "emptyMessage": "This tab is ready for your future cart experience. For now, it is a placeholder landing screen."
+  },
   "details": {
     "title": "Product Detail",
     "loadingTitle": "Loading product...",
@@ -59,6 +69,11 @@
     "imageUnavailable": "Image unavailable",
     "noReviews": "No reviews available yet.",
     "discountSuffix": "% off"
+  },
+  "profile": {
+    "screenTitle": "Profile",
+    "emptyTitle": "Your profile space is ready",
+    "emptyMessage": "This tab is a placeholder landing screen for the upcoming profile experience."
   },
   "apiError": {
     "clientError": "Invalid or incomplete data provided by the client.",
