@@ -1,2 +1,2 @@
 export { default as HomeHeader } from './HomeHeader';
-export type { HomeHeaderProps } from './HomeHeaderTypes';
+export type { HomeHeaderLayoutMetrics, HomeHeaderProps } from './HomeHeaderTypes';
