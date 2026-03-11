@@ -8,13 +8,14 @@ import {
   isDeepLinkType,
   type CheckAndGetParamsReturnType
 } from './DeepLinkUtils';
+import type { MainTabParamList, RootStackParamList } from '../navigation';
 import type { LinkingOptions } from '@react-navigation/native';
 
 /**
  * Creates a ref that can be used to navigate to a new screen.
  * @returns {React.RefObject<NavigationContainerRef>} - A ref that can be used to navigate to a new screen.
  */
-export const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef<RootStackParamList>();
 
 /**
  * Checks if the navigation is not ready, wait 50 milliseconds and try again, otherwise call the callback
@@ -24,11 +25,12 @@ export const navigationRef = createNavigationContainerRef();
  * @returns None
  */
 function navigationCheck(moveCallback: () => void): void {
-  if (!navigationRef.isReady()) {
-    setTimeout(() => navigationCheck(moveCallback), 50);
-  } else {
+  if (navigationRef.isReady()) {
     moveCallback?.();
+    return;
   }
+
+  setTimeout(() => navigationCheck(moveCallback), 50);
 }
 
 /**
@@ -205,7 +207,7 @@ export function navigateJumpToDrawer(routeName: string, params: object = {}): vo
  * @param {object} [params={}] - the params to pass to the tab
  * @returns None
  */
-export function navigateJumpToTab(routeName: string, params: object = {}): void {
+export function navigateJumpToTab(routeName: keyof MainTabParamList, params: object = {}): void {
   navigationCheck(() => {
     const jumpToAction = TabActions.jumpTo(routeName, params);
     navigationRef.dispatch(jumpToAction);
@@ -246,7 +248,7 @@ function handleUrlLink(nonBranchUrl: string): string | undefined {
  * It returns a deep linking configuration object that tells the app how to handle deep links
  * @returns A function that returns an object.
  */
-export function getLinkConfiguration(): LinkingOptions<ReactNavigation.RootParamList> | undefined {
+export function getLinkConfiguration(): LinkingOptions<RootStackParamList> | undefined {
   const linking = {
     enabled: true,
     prefixes: deepLinkPrefixes,
@@ -281,14 +283,26 @@ export function getLinkConfiguration(): LinkingOptions<ReactNavigation.RootParam
     config: {
       // Deep link configuration
       screens: {
-        [ROUTES.Home]: {
-          path: 'home'
+        [ROUTES.RootMain]: {
+          path: '',
+          initialRouteName: ROUTES.Home as keyof MainTabParamList,
+          screens: {
+            [ROUTES.Home]: {
+              path: 'home'
+            },
+            [ROUTES.Cart]: {
+              path: 'cart'
+            },
+            [ROUTES.Profile]: {
+              path: 'profile'
+            }
+          }
         },
         [ROUTES.SignIn]: {
           path: 'signIn'
         },
         [ROUTES.Details]: {
-          path: 'details'
+          path: 'details/:id'
         },
         // Used as catch-all - there is a "Home" in signed-in and signed-out stacks!
         [ROUTES.NotFound]: '*'

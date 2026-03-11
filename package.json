@@ -67,6 +67,7 @@
   "dependencies": {
     "@expo/config-plugins": "54.0.1",
     "@expo/vector-icons": "15.0.2",
+    "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/core": "6.4.17",
     "@react-navigation/devtools": "7.0.28",
     "@react-navigation/native": "6.1.18",

@@ -14,8 +14,9 @@ export default function CustomHeader({
   customRightView,
   title,
   titleStyle,
-  isBottomLine
-}: Partial<CustomHeaderPropsType>): React.ReactElement {
+  isBottomLine,
+  containerStyle
+}: Readonly<Partial<CustomHeaderPropsType>>): React.ReactElement {
   const { styles } = useTheme(styleSheet);
   const [widthLeft, setWidthLeft] = useState<number>(0);
   const [widthRight, setWidthRight] = useState<number>(0);
@@ -43,7 +44,8 @@ export default function CustomHeader({
       style={StyleSheet.flatten([
         isBottomLine && styles.bottomLine,
         { height: headerHeight },
-        styles.container
+        styles.container,
+        containerStyle
       ])}
     >
       <View pointerEvents="none" style={{ height: statusBarHeight }} />
@@ -58,10 +60,10 @@ export default function CustomHeader({
           {title}
         </Text>
         <View style={styles.rightAndLeftView} onLayout={handleLeftLayout}>
-          {customLeftView && customLeftView}
+          {customLeftView}
         </View>
         <View style={styles.rightAndLeftView} onLayout={handleRightLayout}>
-          {customRightView && customRightView}
+          {customRightView}
         </View>
       </View>
     </View>

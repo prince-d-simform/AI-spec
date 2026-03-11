@@ -83,8 +83,18 @@ const styleSheet = (theme: ThemeMode) =>
       fontSize: scale(12),
       fontWeight: '700'
     },
-    footerButton: {
-      marginTop: scale(8)
+    headerActionButton: {
+      alignItems: 'center',
+      height: scale(40),
+      justifyContent: 'center',
+      width: scale(40)
+    },
+    headerActionIcon: {
+      color: Colors[theme]?.black
+    },
+    headerRightSpacer: {
+      height: scale(40),
+      width: scale(40)
     },
     heroCard: {
       backgroundColor: Colors[theme]?.cardBackground,
