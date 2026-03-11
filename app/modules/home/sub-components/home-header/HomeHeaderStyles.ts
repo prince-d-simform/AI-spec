@@ -2,6 +2,8 @@ import { StyleSheet } from 'react-native';
 import { Colors, scale } from '../../../../theme';
 import type { ThemeMode } from '../../../../theme';
 
+export const HOME_HEADER_BASE_PADDING_TOP = scale(16);
+
 /**
  * Styles for the HomeHeader — branded greeting row.
  * All dimensions via scale(), all colors via Colors[theme].
@@ -11,8 +13,7 @@ const styles = (theme: ThemeMode) =>
     /** Outer container — provides screen-edge padding */
     container: {
       paddingBottom: scale(12),
-      paddingHorizontal: scale(16),
-      paddingTop: scale(16)
+      paddingHorizontal: scale(16)
     },
     /** Subtitle — smaller, muted color */
     subtitle: {
