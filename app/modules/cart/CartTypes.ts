@@ -17,16 +17,21 @@ export interface CartRecoveryContent {
 export interface CartItemRowViewModel {
   productId: string;
   title: string;
-  productIdValue: string;
   quantity: number;
   decrementAction: 'minus' | 'delete';
+  imageState: 'remote' | 'placeholder';
+  primaryPriceLabel: string;
   unitPriceValue: string;
+  primaryPriceValue: string;
   lineTotalValue: string;
   discountedTotalValue?: string;
-  discountValue: string;
+  discountValue?: string;
+  hasDiscount: boolean;
   thumbnailUrl?: string;
   isMutating: boolean;
   isDisabled: boolean;
+  canNavigate: boolean;
+  accessibilityLabel: string;
 }
 
 export interface CartSummaryRow {
@@ -60,5 +65,6 @@ export interface UseCartReturn {
   handleRetry: () => void;
   handleIncrementCartItem: (productId: string) => void;
   handleDecrementCartItem: (productId: string) => void;
+  handlePressCartItem: (productId: string) => void;
   handleCheckout: () => void;
 }

@@ -10,52 +10,54 @@ import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../../../th
 const styleSheet = (theme: ThemeMode) =>
   StyleSheet.create({
     ...ApplicationStyles(theme),
+    bottomRow: {
+      columnGap: scale(12),
+      flexDirection: 'row'
+    },
     container: {
       backgroundColor: Colors[theme]?.cardBackground,
       borderRadius: scale(20),
       elevation: scale(2),
-      flexDirection: 'row',
-      gap: scale(14),
       padding: scale(16),
+      rowGap: scale(12),
       shadowColor: Colors[theme]?.cardShadow,
       shadowOffset: { width: 0, height: scale(2) },
       shadowOpacity: 1,
       shadowRadius: scale(8)
     },
-    details: {
+    contentColumn: {
+      rowGap: scale(12)
+    },
+    pricingPanel: {
+      backgroundColor: Colors[theme]?.screenBackground,
+      borderRadius: scale(16),
       flex: 1,
-      gap: scale(10)
+      justifyContent: 'center',
+      minHeight: scale(104),
+      paddingHorizontal: scale(12),
+      paddingVertical: scale(10),
+      rowGap: scale(6)
     },
-    footerRow: {
-      alignItems: 'flex-end',
-      columnGap: scale(12),
-      flexDirection: 'row',
-      justifyContent: 'space-between'
+    primaryDetailsPanel: {
+      backgroundColor: Colors[theme]?.screenBackground,
+      borderRadius: scale(16),
+      flex: 1,
+      justifyContent: 'center',
+      minHeight: scale(112),
+      paddingHorizontal: scale(12),
+      paddingVertical: scale(10),
+      rowGap: scale(4)
     },
-    metaChip: {
-      backgroundColor: Colors[theme]?.chipInactive,
-      borderRadius: scale(999),
-      paddingHorizontal: scale(10),
-      paddingVertical: scale(6)
-    },
-    metaChipText: {
+    primaryPriceLabel: {
       color: Colors[theme]?.gray,
-      fontSize: scale(11),
+      fontSize: scale(13),
       fontWeight: '600'
     },
-    metaRow: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: scale(8)
-    },
-    priceSummaryWrap: {
-      flex: 1,
-      gap: scale(4)
-    },
-    priceText: {
+    primaryPriceValue: {
       color: Colors[theme]?.black,
-      fontSize: scale(14),
-      fontWeight: '600'
+      fontSize: scale(20),
+      fontWeight: '700',
+      lineHeight: scale(26)
     },
     quantityActionButton: {
       alignItems: 'center',
@@ -77,19 +79,26 @@ const styleSheet = (theme: ThemeMode) =>
     quantityActionIconDanger: {
       color: Colors[theme]?.error
     },
-    quantityControlRow: {
+    quantityPanel: {
       alignItems: 'center',
-      columnGap: scale(8),
-      flexDirection: 'row'
+      backgroundColor: Colors[theme]?.screenBackground,
+      borderRadius: scale(16),
+      columnGap: scale(10),
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      minHeight: scale(104),
+      paddingHorizontal: scale(12),
+      paddingVertical: scale(10)
     },
     quantityValue: {
       color: Colors[theme]?.black,
-      fontSize: scale(16),
+      fontSize: scale(18),
       fontWeight: '700'
     },
     quantityValueLabel: {
       color: Colors[theme]?.gray,
-      fontSize: scale(9),
+      fontSize: scale(11),
       fontWeight: '600',
       textTransform: 'uppercase'
     },
@@ -98,29 +107,41 @@ const styleSheet = (theme: ThemeMode) =>
       minWidth: scale(40),
       rowGap: scale(2)
     },
-    summaryText: {
+    secondaryDetailText: {
       color: Colors[theme]?.gray,
-      fontSize: scale(13),
-      lineHeight: scale(18)
+      fontSize: scale(15),
+      lineHeight: scale(22)
     },
     thumbnail: {
       backgroundColor: Colors[theme]?.imagePlaceholder,
       borderRadius: scale(16),
-      height: scale(96),
-      width: scale(96)
+      height: scale(112),
+      width: scale(112)
     },
     thumbnailPlaceholder: {
       alignItems: 'center',
       backgroundColor: Colors[theme]?.imagePlaceholder,
       borderRadius: scale(16),
-      height: scale(96),
+      height: scale(112),
       justifyContent: 'center',
-      width: scale(96)
+      paddingHorizontal: scale(8),
+      width: scale(112)
+    },
+    thumbnailPlaceholderText: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(11),
+      lineHeight: scale(16),
+      textAlign: 'center'
     },
     title: {
       color: Colors[theme]?.black,
-      fontSize: scale(16),
-      fontWeight: '700'
+      fontSize: scale(18),
+      fontWeight: '700',
+      lineHeight: scale(24)
+    },
+    topRow: {
+      columnGap: scale(12),
+      flexDirection: 'row'
     }
   });
 

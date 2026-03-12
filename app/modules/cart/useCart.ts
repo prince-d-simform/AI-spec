@@ -1,8 +1,9 @@
 import { useCallback, useMemo } from 'react';
-import { Strings } from '../../constants';
+import { ROUTES, Strings } from '../../constants';
 import { CartActions, CartSelectors } from '../../redux/cart';
 import { useAppDispatch, useAppSelector } from '../../redux/useRedux';
 import { scale } from '../../theme';
+import { navigateWithPush } from '../../utils';
 import { CART_LIST_ITEM_HEIGHT, type CartSummaryRowKey, CART_SUMMARY_ROW_KEYS } from './CartData';
 import type {
   CartEmptyStateContent,
@@ -116,22 +117,39 @@ const useCart = (): UseCartReturn => {
 
   const itemRows = useMemo<CartItemRowViewModel[]>(
     () =>
-      cartItems.map((item) => ({
-        productId: item.productId,
-        title: item.title,
-        productIdValue: item.productId,
-        quantity: item.quantity,
-        decrementAction: item.quantity <= 1 ? 'delete' : 'minus',
-        unitPriceValue: formatCurrency(item.unitPrice),
-        lineTotalValue: formatCurrency(item.lineTotal),
-        discountedTotalValue: Number.isFinite(item.lineDiscountedTotal)
+      cartItems.map((item) => {
+        const discountValue =
+          Number.isFinite(item.discountPercentage) && item.discountPercentage > 0
+            ? `${item.discountPercentage.toFixed(2)}%`
+            : undefined;
+        const discountedTotalValue = Number.isFinite(item.lineDiscountedTotal)
           ? formatCurrency(item.lineDiscountedTotal ?? 0)
-          : undefined,
-        discountValue: `${item.discountPercentage.toFixed(2)}%`,
-        thumbnailUrl: item.thumbnailUrl,
-        isMutating: activeMutationProductIds.includes(item.productId),
-        isDisabled: isCartMutationLocked
-      })),
+          : undefined;
+        const hasDiscount = Boolean(discountValue || discountedTotalValue);
+        const primaryPriceLabel = hasDiscount
+          ? Strings.Cart.discountedLineTotalLabel
+          : Strings.Cart.lineTotalLabel;
+
+        return {
+          productId: item.productId,
+          title: item.title,
+          quantity: item.quantity,
+          decrementAction: item.quantity <= 1 ? 'delete' : 'minus',
+          imageState: item.thumbnailUrl ? 'remote' : 'placeholder',
+          primaryPriceLabel,
+          unitPriceValue: formatCurrency(item.unitPrice),
+          primaryPriceValue: discountedTotalValue ?? formatCurrency(item.lineTotal),
+          lineTotalValue: formatCurrency(item.lineTotal),
+          discountedTotalValue,
+          discountValue,
+          hasDiscount,
+          thumbnailUrl: item.thumbnailUrl,
+          isMutating: activeMutationProductIds.includes(item.productId),
+          isDisabled: isCartMutationLocked,
+          canNavigate: item.productId.trim().length > 0,
+          accessibilityLabel: `${Strings.Cart.openProductDetailsAccessibility}: ${item.title}`
+        };
+      }),
     [activeMutationProductIds, cartItems, isCartMutationLocked]
   );
 
@@ -179,6 +197,14 @@ const useCart = (): UseCartReturn => {
     [cartItems, dispatch, isCartMutationLocked]
   );
 
+  const handlePressCartItem = useCallback((productId: string): void => {
+    if (!productId.trim()) {
+      return;
+    }
+
+    navigateWithPush(ROUTES.Details, { id: productId });
+  }, []);
+
   const handleCheckout = useCallback((): void => {
     return;
   }, []);
@@ -207,6 +233,7 @@ const useCart = (): UseCartReturn => {
     handleRetry,
     handleIncrementCartItem,
     handleDecrementCartItem,
+    handlePressCartItem,
     handleCheckout
   };
 };

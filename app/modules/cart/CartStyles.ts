@@ -41,8 +41,9 @@ const styleSheet = (theme: ThemeMode) =>
       width: scale(88)
     },
     listContent: {
-      padding: scale(16),
-      paddingBottom: scale(32),
+      paddingBottom: scale(28),
+      paddingHorizontal: scale(16),
+      paddingTop: scale(10),
       rowGap: scale(16)
     },
     loadingText: {

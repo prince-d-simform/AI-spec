@@ -1,6 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import React, { memo, useCallback } from 'react';
-import { Image, Pressable, View } from 'react-native';
+import { Image, Pressable, View, type GestureResponderEvent } from 'react-native';
 import { Text } from '../../../../components';
 import { Strings } from '../../../../constants';
 import { useTheme } from '../../../../hooks';
@@ -14,65 +14,69 @@ import type { CartItemRowProps } from './CartItemRowTypes';
  * @param {CartItemRowProps} props - Row props.
  * @returns {React.ReactElement} Cart row.
  */
-const CartItemRow = ({ item, onIncrement, onDecrement, testID }: CartItemRowProps) => {
+const CartItemRow = ({ item, onIncrement, onDecrement, onPressItem, testID }: CartItemRowProps) => {
   const { styles } = useTheme(styleSheet);
 
-  const handleIncrement = useCallback((): void => {
-    onIncrement(item.productId);
-  }, [item.productId, onIncrement]);
+  const handleIncrement = useCallback(
+    (event: GestureResponderEvent): void => {
+      event.stopPropagation();
+      onIncrement(item.productId);
+    },
+    [item.productId, onIncrement]
+  );
 
-  const handleDecrement = useCallback((): void => {
-    onDecrement(item.productId);
-  }, [item.productId, onDecrement]);
+  const handleDecrement = useCallback(
+    (event: GestureResponderEvent): void => {
+      event.stopPropagation();
+      onDecrement(item.productId);
+    },
+    [item.productId, onDecrement]
+  );
+
+  const handlePressItem = useCallback((): void => {
+    if (!item.canNavigate) {
+      return;
+    }
+
+    onPressItem(item.productId);
+  }, [item.canNavigate, item.productId, onPressItem]);
 
   return (
-    <View style={styles.container} testID={testID}>
-      {item.thumbnailUrl ? (
-        <Image resizeMode="cover" source={{ uri: item.thumbnailUrl }} style={styles.thumbnail} />
-      ) : (
-        <View style={styles.thumbnailPlaceholder}>
-          <Text style={styles.summaryText}>{Strings.Details.imageUnavailable}</Text>
-        </View>
-      )}
-      <View style={styles.details}>
-        <Text numberOfLines={2} style={styles.title}>
-          {item.title}
-        </Text>
-
-        <View style={styles.metaRow}>
-          <View style={styles.metaChip}>
-            <Text style={styles.metaChipText}>
-              {Strings.Cart.productIdLabel}: {item.productIdValue}
-            </Text>
-          </View>
-          <View style={styles.metaChip}>
-            <Text style={styles.metaChipText}>
-              {Strings.Cart.quantityLabel}: {item.quantity}
-            </Text>
-          </View>
-          <View style={styles.metaChip}>
-            <Text style={styles.metaChipText}>
-              {Strings.Cart.discountLabel}: {item.discountValue}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.footerRow}>
-          <View style={styles.priceSummaryWrap}>
-            <Text style={styles.priceText}>
-              {Strings.Cart.unitPriceLabel}: {item.unitPriceValue}
-            </Text>
-            <Text style={styles.summaryText}>
-              {Strings.Cart.lineTotalLabel}: {item.lineTotalValue}
-            </Text>
-            {item.discountedTotalValue ? (
-              <Text style={styles.summaryText}>
-                {Strings.Cart.discountedLineTotalLabel}: {item.discountedTotalValue}
+    <Pressable
+      accessibilityLabel={item.accessibilityLabel}
+      accessibilityRole="button"
+      disabled={!item.canNavigate}
+      style={styles.container}
+      testID={testID}
+      onPress={handlePressItem}
+    >
+      <View style={styles.contentColumn}>
+        <View style={styles.topRow}>
+          {item.imageState === 'remote' && item.thumbnailUrl ? (
+            <Image
+              resizeMode="cover"
+              source={{ uri: item.thumbnailUrl }}
+              style={styles.thumbnail}
+            />
+          ) : (
+            <View style={styles.thumbnailPlaceholder}>
+              <Text numberOfLines={2} style={styles.thumbnailPlaceholderText}>
+                {Strings.Details.imageUnavailable}
               </Text>
-            ) : null}
-          </View>
+            </View>
+          )}
 
-          <View style={styles.quantityControlRow}>
+          <View style={styles.primaryDetailsPanel}>
+            <Text numberOfLines={2} style={styles.title}>
+              {item.title}
+            </Text>
+            <Text style={styles.primaryPriceLabel}>{item.primaryPriceLabel}</Text>
+            <Text style={styles.primaryPriceValue}>{item.primaryPriceValue}</Text>
+          </View>
+        </View>
+
+        <View style={styles.bottomRow}>
+          <View style={styles.quantityPanel}>
             <Pressable
               accessibilityLabel={
                 item.decrementAction === 'delete'
@@ -119,9 +123,21 @@ const CartItemRow = ({ item, onIncrement, onDecrement, testID }: CartItemRowProp
               <Ionicons color={styles.quantityActionIcon.color} name="add" size={scale(18)} />
             </Pressable>
           </View>
+
+          <View style={styles.pricingPanel}>
+            <Text style={styles.secondaryDetailText}>
+              {Strings.Cart.unitPriceLabel}: {item.unitPriceValue}
+            </Text>
+            <Text style={styles.secondaryDetailText}>
+              {Strings.Cart.lineTotalLabel}: {item.lineTotalValue}
+            </Text>
+            <Text style={styles.secondaryDetailText}>
+              {Strings.Cart.discountLabel}: {item.discountValue ?? Strings.Cart.unavailableValue}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

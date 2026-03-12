@@ -103,6 +103,7 @@ const Cart = freezeStringsObject({
   discountLabel: I18n.t('cart:discountLabel'),
   invalidProductMessage: I18n.t('cart:invalidProductMessage'),
   checkoutButton: I18n.t('cart:checkoutButton'),
+  openProductDetailsAccessibility: I18n.t('cart:openProductDetailsAccessibility'),
   incrementQuantityAccessibility: I18n.t('cart:incrementQuantityAccessibility'),
   decrementQuantityAccessibility: I18n.t('cart:decrementQuantityAccessibility'),
   deleteQuantityAccessibility: I18n.t('cart:deleteQuantityAccessibility')
