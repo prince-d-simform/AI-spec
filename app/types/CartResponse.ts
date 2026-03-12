@@ -28,5 +28,8 @@ export interface RemoteCartResponse {
   userId: number;
   totalProducts: number;
   totalQuantity: number;
+  tax?: number;
+  shipping?: number;
+  grandTotal?: number;
   message?: string;
 }

@@ -2,7 +2,7 @@ import type { ErrorResponse } from '../../types';
 
 export type CartPricingStatus = 'complete' | 'partial';
 export type CartSnapshotSource = 'api' | 'local-fallback';
-export type CartFailedOperation = 'hydrate' | 'add';
+export type CartFailedOperation = 'hydrate' | 'add' | 'increment' | 'decrement' | 'delete';
 
 export interface CartItem {
   productId: string;
@@ -25,6 +25,16 @@ export interface CartPricingSummary {
   pricingStatus: CartPricingStatus;
 }
 
+export interface CartDisplayPricingSummary {
+  subtotal: number;
+  discountedSubtotal: number;
+  discountAmount: number;
+  tax: number;
+  shipping: number;
+  grandTotal: number;
+  usesFallbackValues: boolean;
+}
+
 export interface CartSnapshot {
   cartId: string;
   apiUserId?: number;
@@ -41,6 +51,7 @@ export interface CartStateType {
   isHydrated: boolean;
   isCartLoading: boolean;
   activeMutationProductIds: string[];
+  isCartMutationLocked: boolean;
   cartError?: ErrorResponse;
   lastFailedOperation?: CartFailedOperation;
 }
@@ -60,6 +71,7 @@ const INITIAL_STATE: CartStateType = {
   isHydrated: false,
   isCartLoading: false,
   activeMutationProductIds: [],
+  isCartMutationLocked: false,
   cartError: undefined,
   lastFailedOperation: undefined
 };

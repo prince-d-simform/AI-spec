@@ -10,6 +10,9 @@ import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../../../th
 const styleSheet = (theme: ThemeMode) =>
   StyleSheet.create({
     ...ApplicationStyles(theme),
+    checkoutButtonWrap: {
+      marginTop: scale(8)
+    },
     container: {
       backgroundColor: Colors[theme]?.cardBackground,
       borderRadius: scale(20),

@@ -26,6 +26,12 @@ const styleSheet = (theme: ThemeMode) =>
       flex: 1,
       gap: scale(10)
     },
+    footerRow: {
+      alignItems: 'flex-end',
+      columnGap: scale(12),
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
     metaChip: {
       backgroundColor: Colors[theme]?.chipInactive,
       borderRadius: scale(999),
@@ -42,10 +48,55 @@ const styleSheet = (theme: ThemeMode) =>
       flexWrap: 'wrap',
       gap: scale(8)
     },
+    priceSummaryWrap: {
+      flex: 1,
+      gap: scale(4)
+    },
     priceText: {
       color: Colors[theme]?.black,
       fontSize: scale(14),
       fontWeight: '600'
+    },
+    quantityActionButton: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.secondary,
+      borderRadius: scale(999),
+      height: scale(34),
+      justifyContent: 'center',
+      width: scale(34)
+    },
+    quantityActionButtonDanger: {
+      backgroundColor: Colors[theme]?.pastelPeach
+    },
+    quantityActionButtonDisabled: {
+      opacity: 0.5
+    },
+    quantityActionIcon: {
+      color: Colors[theme]?.primary
+    },
+    quantityActionIconDanger: {
+      color: Colors[theme]?.error
+    },
+    quantityControlRow: {
+      alignItems: 'center',
+      columnGap: scale(8),
+      flexDirection: 'row'
+    },
+    quantityValue: {
+      color: Colors[theme]?.black,
+      fontSize: scale(16),
+      fontWeight: '700'
+    },
+    quantityValueLabel: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(9),
+      fontWeight: '600',
+      textTransform: 'uppercase'
+    },
+    quantityValueWrap: {
+      alignItems: 'center',
+      minWidth: scale(40),
+      rowGap: scale(2)
     },
     summaryText: {
       color: Colors[theme]?.gray,

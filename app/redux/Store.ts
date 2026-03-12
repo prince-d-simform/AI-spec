@@ -24,6 +24,7 @@ const cartPersistTransform = createTransform<CartStateType, Partial<CartStateTyp
     isHydrated: outboundState.isHydrated ?? false,
     isCartLoading: false,
     activeMutationProductIds: [],
+    isCartMutationLocked: false,
     cartError: undefined,
     lastFailedOperation: undefined
   }),

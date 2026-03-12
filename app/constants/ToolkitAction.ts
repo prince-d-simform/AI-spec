@@ -9,5 +9,8 @@ export default Object.freeze({
   getCategoryProducts: 'products/getCategoryProducts',
   getProductCategories: 'products/getProductCategories',
   confirmCart: 'cart/confirmCart',
-  addProductToCart: 'cart/addProductToCart'
+  addProductToCart: 'cart/addProductToCart',
+  incrementCartProduct: 'cart/incrementCartProduct',
+  decrementCartProduct: 'cart/decrementCartProduct',
+  removeCartProduct: 'cart/removeCartProduct'
 });

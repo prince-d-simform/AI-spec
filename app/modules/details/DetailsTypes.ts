@@ -3,9 +3,11 @@ export interface ProductDetailRouteParams {
 }
 
 export interface ProductDetailCartControlState {
-  mode: 'add' | 'added';
+  mode: 'add' | 'quantity';
   quantity: number;
+  decrementAction: 'minus' | 'delete';
   isMutating: boolean;
+  isDisabled: boolean;
 }
 
 export interface ProductReview {
@@ -79,4 +81,6 @@ export interface UseDetailsReturn {
   handleRetry: () => void;
   handleBackPress: () => void;
   handleAddToCart: () => void;
+  handleIncrementCart: () => void;
+  handleDecrementCart: () => void;
 }

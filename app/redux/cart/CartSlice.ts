@@ -6,7 +6,6 @@ import { CART_DUMMY_USER_ID } from '../../modules/cart/CartData';
 import { getErrorResponse } from '../../utils/CommonUtils';
 import INITIAL_STATE, {
   EMPTY_CART_PRICING_SUMMARY,
-  type CartFailedOperation,
   type CartItem,
   type CartSnapshot,
   type CartStateType
@@ -19,6 +18,8 @@ import type {
   RemoteCartResponse
 } from '../../types';
 import type { AppDispatchType, RootStateType } from '../Store';
+
+type CartMutationType = 'add' | 'increment' | 'decrement' | 'delete';
 
 interface CartMutationArgs {
   productId: string;
@@ -41,7 +42,7 @@ interface CartMutationThunkApi {
 }
 
 /**
- * Raw API thunk for add-only cart confirmation.
+ * Raw API thunk for cart confirmation.
  */
 const confirmCartRequest = createAsyncThunkWithCancelToken<RemoteCartResponse>(
   ToolkitAction.confirmCart,
@@ -126,10 +127,15 @@ function normalizeCartSnapshot(
     .filter((product): product is CartItem => !!product);
   const subtotal = Number(response.total);
   const discountedSubtotal = Number(response.discountedTotal);
+  const tax = Number(response.tax);
+  const shipping = Number(response.shipping);
+  const grandTotal = Number(response.grandTotal);
   const discountAmount =
     Number.isFinite(subtotal) && Number.isFinite(discountedSubtotal)
       ? Math.max(subtotal - discountedSubtotal, 0)
       : EMPTY_CART_PRICING_SUMMARY.discountAmount;
+  const hasCompletePricing =
+    Number.isFinite(tax) && Number.isFinite(shipping) && Number.isFinite(grandTotal);
 
   return {
     cartId: String(response.id),
@@ -145,10 +151,10 @@ function normalizeCartSnapshot(
       subtotal: Number.isFinite(subtotal) ? subtotal : 0,
       discountedSubtotal: Number.isFinite(discountedSubtotal) ? discountedSubtotal : 0,
       discountAmount,
-      tax: undefined,
-      shipping: undefined,
-      grandTotal: undefined,
-      pricingStatus: 'partial'
+      tax: Number.isFinite(tax) ? tax : undefined,
+      shipping: Number.isFinite(shipping) ? shipping : undefined,
+      grandTotal: Number.isFinite(grandTotal) ? grandTotal : undefined,
+      pricingStatus: hasCompletePricing ? 'complete' : 'partial'
     },
     lastSyncedAt: Date.now(),
     source
@@ -170,58 +176,49 @@ function toErrorResponse(error: unknown): ErrorResponse {
 }
 
 /**
- * Starts one product-scoped cart mutation.
+ * Starts one cart mutation.
  *
  * @param {Draft<CartStateType>} state - Draft cart state.
  * @param {string} productId - Active product identifier.
- * @param {CartFailedOperation} operation - Mutation operation type.
  * @returns {void}
  */
-function startMutation(
-  state: Draft<CartStateType>,
-  productId: string,
-  operation: CartFailedOperation
-): void {
-  if (!state.activeMutationProductIds.includes(productId)) {
-    state.activeMutationProductIds.push(productId);
-  }
-
+function startMutation(state: Draft<CartStateType>, productId: string): void {
+  state.activeMutationProductIds = productId ? [productId] : [];
   state.isCartLoading = true;
+  state.isCartMutationLocked = true;
   state.cartError = undefined;
-  state.lastFailedOperation = operation;
+  state.lastFailedOperation = undefined;
 }
 
 /**
- * Finishes one product-scoped cart mutation.
+ * Finishes one cart mutation.
  *
  * @param {Draft<CartStateType>} state - Draft cart state.
- * @param {string} productId - Completed product identifier.
  * @returns {void}
  */
-function finishMutation(state: Draft<CartStateType>, productId: string): void {
-  state.activeMutationProductIds = state.activeMutationProductIds.filter(
-    (activeProductId) => activeProductId !== productId
-  );
-  state.isCartLoading = state.activeMutationProductIds.length > 0;
+function finishMutation(state: Draft<CartStateType>): void {
+  state.activeMutationProductIds = [];
+  state.isCartLoading = false;
+  state.isCartMutationLocked = false;
 }
 
 /**
- * Builds the full add-only cart payload for the next confirmation.
+ * Builds the full cart payload for the next confirmation.
  *
- * @param {CartSnapshot | undefined} snapshot - Confirmed cart snapshot.
+ * @param {CartSnapshot | undefined} snapshot - Current confirmed cart snapshot.
  * @param {string} productId - Target product identifier.
- * @param {number} quantity - Requested quantity for a newly added product.
- * @returns {CartRequestProductInput[]} Full desired confirmed cart payload.
+ * @param {number} targetQuantity - Desired confirmed quantity.
+ * @returns {CartRequestProductInput[]} Full desired cart payload.
  */
-function buildAddOnlyProducts(
+function buildCartProducts(
   snapshot: CartSnapshot | undefined,
   productId: string,
-  quantity: number
+  targetQuantity: number
 ): CartRequestProductInput[] {
   const normalizedProductId = normalizeText(productId);
   const numericProductId = Number(normalizedProductId);
 
-  if (!normalizedProductId || !Number.isFinite(numericProductId) || quantity < 1) {
+  if (!normalizedProductId || !Number.isFinite(numericProductId)) {
     return [];
   }
 
@@ -241,39 +238,106 @@ function buildAddOnlyProducts(
       return products;
     }, []) ?? [];
 
-  if (currentProducts.some((item) => item.id === numericProductId)) {
-    return currentProducts;
+  let hasTarget = false;
+
+  const nextProducts = currentProducts.reduce<CartRequestProductInput[]>((products, item) => {
+    if (item.id !== numericProductId) {
+      products.push(item);
+      return products;
+    }
+
+    hasTarget = true;
+
+    if (targetQuantity > 0) {
+      products.push({
+        id: item.id,
+        quantity: targetQuantity
+      });
+    }
+
+    return products;
+  }, []);
+
+  if (!hasTarget && targetQuantity > 0) {
+    nextProducts.push({
+      id: numericProductId,
+      quantity: targetQuantity
+    });
   }
 
-  return [...currentProducts, { id: numericProductId, quantity }];
+  return nextProducts;
 }
 
 /**
- * Executes the add-only cart confirmation flow.
+ * Resolves the desired quantity for the current mutation.
+ *
+ * @param {CartSnapshot | undefined} snapshot - Confirmed cart snapshot.
+ * @param {string} productId - Product identifier.
+ * @param {CartMutationType} mutationType - Requested mutation type.
+ * @param {number} quantity - Requested quantity delta.
+ * @returns {number} Target confirmed quantity.
+ */
+function resolveTargetQuantity(
+  snapshot: CartSnapshot | undefined,
+  productId: string,
+  mutationType: CartMutationType,
+  quantity: number
+): number {
+  const currentQuantity =
+    snapshot?.items.find((item) => item.productId === productId)?.quantity ?? 0;
+
+  switch (mutationType) {
+    case 'add':
+      return currentQuantity + Math.max(quantity, 1);
+    case 'increment':
+      return Math.max(currentQuantity, 0) + 1;
+    case 'decrement':
+      if (currentQuantity < 1) {
+        throw getErrorResponse(Strings.Cart.invalidProductMessage);
+      }
+
+      return Math.max(currentQuantity - 1, 0);
+    case 'delete':
+      if (currentQuantity < 1) {
+        throw getErrorResponse(Strings.Cart.invalidProductMessage);
+      }
+
+      return 0;
+    default:
+      return currentQuantity;
+  }
+}
+
+/**
+ * Executes one full-snapshot cart confirmation mutation.
  *
  * @param {CartMutationThunkApi} thunkApi - Thunk helpers.
  * @param {string} productId - Target product identifier.
- * @param {number} quantity - Quantity to add.
- * @returns {Promise<CartSnapshot>} Normalized snapshot.
+ * @param {CartMutationType} mutationType - Requested mutation type.
+ * @param {number} [quantity=1] - Requested quantity delta.
+ * @returns {Promise<CartSnapshot>} Normalized confirmed snapshot.
  */
-async function syncAddOnlyMutation(
+async function syncCartMutation(
   thunkApi: CartMutationThunkApi,
   productId: string,
-  quantity: number
+  mutationType: CartMutationType,
+  quantity = 1
 ): Promise<CartSnapshot> {
   const normalizedProductId = normalizeText(productId);
   const numericProductId = Number(normalizedProductId);
   const snapshot = thunkApi.getState().cart?.snapshot;
 
-  if (!normalizedProductId || !Number.isFinite(numericProductId) || quantity < 1) {
+  if (!normalizedProductId || !Number.isFinite(numericProductId)) {
     throw getErrorResponse(Strings.Cart.invalidProductMessage);
   }
 
-  const products = buildAddOnlyProducts(snapshot, normalizedProductId, quantity);
-
-  if (!products.length) {
-    throw getErrorResponse(Strings.Cart.invalidProductMessage);
-  }
+  const targetQuantity = resolveTargetQuantity(
+    snapshot,
+    normalizedProductId,
+    mutationType,
+    quantity
+  );
+  const products = buildCartProducts(snapshot, normalizedProductId, targetQuantity);
 
   const requestBody: AddCartRequest = {
     userId: CART_DUMMY_USER_ID,
@@ -297,30 +361,80 @@ async function syncAddOnlyMutation(
 }
 
 /**
- * Returns whether a new mutation is allowed for one product.
+ * Returns whether a new cart mutation can start.
  *
  * @param {RootStateType} state - Redux root state.
- * @param {string} productId - Product identifier.
- * @returns {boolean} True when a new mutation is allowed.
+ * @returns {boolean} True when the cart is unlocked.
  */
-function canMutateProduct(state: RootStateType, productId: string): boolean {
-  return !state.cart?.activeMutationProductIds.includes(productId);
+function canMutateCart(state: RootStateType): boolean {
+  return !state.cart?.isCartMutationLocked;
 }
 
 /**
- * Adds a product to the cart, creating the cart first when needed.
+ * Adds a product to the cart through the shared confirmation flow.
  */
 const addProductToCart = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
   ToolkitAction.addProductToCart,
   async ({ productId, quantity = 1 }, thunkApi) => {
     try {
-      return await syncAddOnlyMutation(thunkApi, productId, quantity);
+      return await syncCartMutation(thunkApi, productId, 'add', quantity);
     } catch (error) {
       return thunkApi.rejectWithValue(toErrorResponse(error));
     }
   },
   {
-    condition: ({ productId }, { getState }) => canMutateProduct(getState(), productId)
+    condition: (_args, { getState }) => canMutateCart(getState())
+  }
+);
+
+/**
+ * Increments one cart product through the shared confirmation flow.
+ */
+const incrementCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
+  ToolkitAction.incrementCartProduct,
+  async ({ productId }, thunkApi) => {
+    try {
+      return await syncCartMutation(thunkApi, productId, 'increment');
+    } catch (error) {
+      return thunkApi.rejectWithValue(toErrorResponse(error));
+    }
+  },
+  {
+    condition: (_args, { getState }) => canMutateCart(getState())
+  }
+);
+
+/**
+ * Decrements one cart product through the shared confirmation flow.
+ */
+const decrementCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
+  ToolkitAction.decrementCartProduct,
+  async ({ productId }, thunkApi) => {
+    try {
+      return await syncCartMutation(thunkApi, productId, 'decrement');
+    } catch (error) {
+      return thunkApi.rejectWithValue(toErrorResponse(error));
+    }
+  },
+  {
+    condition: (_args, { getState }) => canMutateCart(getState())
+  }
+);
+
+/**
+ * Removes one cart product through the shared confirmation flow.
+ */
+const removeCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
+  ToolkitAction.removeCartProduct,
+  async ({ productId }, thunkApi) => {
+    try {
+      return await syncCartMutation(thunkApi, productId, 'delete');
+    } catch (error) {
+      return thunkApi.rejectWithValue(toErrorResponse(error));
+    }
+  },
+  {
+    condition: (_args, { getState }) => canMutateCart(getState())
   }
 );
 
@@ -344,6 +458,7 @@ const cartSlice = createSlice({
         : undefined;
       state.isHydrated = true;
       state.isCartLoading = false;
+      state.isCartMutationLocked = false;
       state.activeMutationProductIds = [];
       state.cartError = undefined;
       state.lastFailedOperation = undefined;
@@ -364,6 +479,7 @@ const cartSlice = createSlice({
           : undefined;
         state.isHydrated = true;
         state.isCartLoading = false;
+        state.isCartMutationLocked = false;
         state.activeMutationProductIds = [];
         state.cartError = undefined;
         state.lastFailedOperation = undefined;
@@ -371,19 +487,67 @@ const cartSlice = createSlice({
     );
 
     builder.addCase(addProductToCart.pending, (state, action) => {
-      startMutation(state, normalizeText(action.meta.arg.productId), 'add');
+      startMutation(state, normalizeText(action.meta.arg.productId));
     });
     builder.addCase(addProductToCart.fulfilled, (state, action) => {
       state.snapshot = action.payload;
       state.isHydrated = true;
       state.cartError = undefined;
       state.lastFailedOperation = undefined;
-      finishMutation(state, normalizeText(action.meta.arg.productId));
+      finishMutation(state);
     });
     builder.addCase(addProductToCart.rejected, (state, action) => {
       state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
       state.lastFailedOperation = 'add';
-      finishMutation(state, normalizeText(action.meta.arg.productId));
+      finishMutation(state);
+    });
+
+    builder.addCase(incrementCartProduct.pending, (state, action) => {
+      startMutation(state, normalizeText(action.meta.arg.productId));
+    });
+    builder.addCase(incrementCartProduct.fulfilled, (state, action) => {
+      state.snapshot = action.payload;
+      state.isHydrated = true;
+      state.cartError = undefined;
+      state.lastFailedOperation = undefined;
+      finishMutation(state);
+    });
+    builder.addCase(incrementCartProduct.rejected, (state, action) => {
+      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
+      state.lastFailedOperation = 'increment';
+      finishMutation(state);
+    });
+
+    builder.addCase(decrementCartProduct.pending, (state, action) => {
+      startMutation(state, normalizeText(action.meta.arg.productId));
+    });
+    builder.addCase(decrementCartProduct.fulfilled, (state, action) => {
+      state.snapshot = action.payload;
+      state.isHydrated = true;
+      state.cartError = undefined;
+      state.lastFailedOperation = undefined;
+      finishMutation(state);
+    });
+    builder.addCase(decrementCartProduct.rejected, (state, action) => {
+      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
+      state.lastFailedOperation = 'decrement';
+      finishMutation(state);
+    });
+
+    builder.addCase(removeCartProduct.pending, (state, action) => {
+      startMutation(state, normalizeText(action.meta.arg.productId));
+    });
+    builder.addCase(removeCartProduct.fulfilled, (state, action) => {
+      state.snapshot = action.payload;
+      state.isHydrated = true;
+      state.cartError = undefined;
+      state.lastFailedOperation = undefined;
+      finishMutation(state);
+    });
+    builder.addCase(removeCartProduct.rejected, (state, action) => {
+      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
+      state.lastFailedOperation = 'delete';
+      finishMutation(state);
     });
   }
 });
@@ -392,5 +556,8 @@ export const CartReducer = cartSlice.reducer;
 export const CartActions = {
   ...cartSlice.actions,
   addProductToCart,
+  incrementCartProduct,
+  decrementCartProduct,
+  removeCartProduct,
   confirmCartRequest
 };
