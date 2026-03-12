@@ -2,6 +2,12 @@ export interface ProductDetailRouteParams {
   id: string;
 }
 
+export interface ProductDetailCartControlState {
+  mode: 'add' | 'quantity';
+  quantity: number;
+  isMutating: boolean;
+}
+
 export interface ProductReview {
   rating: number;
   comment: string;
@@ -60,6 +66,8 @@ export interface DetailSectionVisibility {
 export interface UseDetailsReturn {
   productId: string;
   productDetail?: ProductDetail;
+  cartControlState: ProductDetailCartControlState;
+  cartErrorMessage?: string;
   heroImageUrls: readonly string[];
   selectedImageUrl: string;
   detailSectionVisibility: DetailSectionVisibility;
@@ -70,4 +78,7 @@ export interface UseDetailsReturn {
   handleSelectImage: (imageUrl: string) => void;
   handleRetry: () => void;
   handleBackPress: () => void;
+  handleAddToCart: () => void;
+  handleIncrementCartQuantity: () => void;
+  handleDecrementCartQuantity: () => void;
 }

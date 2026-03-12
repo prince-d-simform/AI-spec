@@ -1,10 +1,34 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import { persistReducer, persistStore } from 'redux-persist';
+import { createTransform, persistReducer, persistStore } from 'redux-persist';
 import { getReactotronEnhancer } from '../configs/Reactotron';
 import { AppEnvConst } from '../constants';
 import { reduxStorage } from '../services';
 import { AuthReducer } from './auth';
+import { CartReducer } from './cart';
 import { ProductsReducer } from './products';
+import type { CartStateType } from './cart';
+
+const cartPersistTransform = createTransform<CartStateType, Partial<CartStateType>>(
+  (inboundState) => ({
+    snapshot: inboundState.snapshot,
+    isHydrated: inboundState.isHydrated
+  }),
+  (outboundState) => ({
+    ...outboundState,
+    snapshot: outboundState.snapshot
+      ? {
+          ...outboundState.snapshot,
+          source: 'local-fallback'
+        }
+      : undefined,
+    isHydrated: outboundState.isHydrated ?? false,
+    isCartLoading: false,
+    activeMutationProductIds: [],
+    cartError: undefined,
+    lastFailedOperation: undefined
+  }),
+  { whitelist: ['cart'] }
+);
 
 /**
  * The Configuring persistConfig object for ReduxStorage.
@@ -19,8 +43,9 @@ const persistConfig = {
   key: '@AiSpecToolkitCachePersist',
   version: 1,
   storage: reduxStorage,
-  whitelist: ['auth'], // Whitelist (Save Specific Reducers)
-  blacklist: ['nav', 'navigation'] // Blacklist (Don't Save Specific Reducers)
+  whitelist: ['auth', 'cart'], // Whitelist (Save Specific Reducers)
+  blacklist: ['nav', 'navigation'], // Blacklist (Don't Save Specific Reducers)
+  transforms: [cartPersistTransform]
 };
 
 /**
@@ -29,6 +54,7 @@ const persistConfig = {
  */
 const rootReducer = combineReducers({
   auth: AuthReducer,
+  cart: CartReducer,
   products: ProductsReducer
 });
 
@@ -38,7 +64,7 @@ const rootReducer = combineReducers({
  * @param {Reducer} rootReducer - The reducer to be persisted.
  * @returns {Reducer} - The persisted reducer.
  */
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer<any, any>(persistConfig, rootReducer);
 
 const middlewareList: any[] = [];
 

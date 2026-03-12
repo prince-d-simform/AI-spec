@@ -2,6 +2,7 @@ import { type RouteProp, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { APIDispatch } from '../../configs';
 import { ROUTES, Strings } from '../../constants';
+import { CartActions, CartSelectors } from '../../redux/cart';
 import { ProductsActions, ProductsSelectors } from '../../redux/products';
 import { useAppDispatch, useAppSelector } from '../../redux/useRedux';
 import { navigateBack } from '../../utils';
@@ -32,6 +33,10 @@ const useDetails = (): UseDetailsReturn => {
   const isProductDetailLoading = useAppSelector(ProductsSelectors.getProductDetailLoading);
   const productDetailError = useAppSelector(ProductsSelectors.getProductDetailError);
   const isProductDetailUnavailable = useAppSelector(ProductsSelectors.getProductDetailUnavailable);
+  const cartControlState = useAppSelector((state) =>
+    CartSelectors.getProductDetailCartControlState(state, id)
+  );
+  const cartErrorMessage = useAppSelector(CartSelectors.getCartError)?.message?.trim();
 
   const handleFetchProductDetail = useCallback(
     (productId: string): void => {
@@ -130,9 +135,28 @@ const useDetails = (): UseDetailsReturn => {
     navigateBack();
   }, []);
 
+  const handleAddToCart = useCallback((): void => {
+    dispatch(CartActions.addProductToCart({ productId: id }));
+  }, [dispatch, id]);
+
+  const handleIncrementCartQuantity = useCallback((): void => {
+    dispatch(CartActions.incrementCartProduct({ productId: id }));
+  }, [dispatch, id]);
+
+  const handleDecrementCartQuantity = useCallback((): void => {
+    if (cartControlState.quantity <= 1) {
+      dispatch(CartActions.removeCartProduct({ productId: id }));
+      return;
+    }
+
+    dispatch(CartActions.decrementCartProduct({ productId: id }));
+  }, [cartControlState.quantity, dispatch, id]);
+
   return {
     productId: id,
     productDetail,
+    cartControlState,
+    cartErrorMessage,
     heroImageUrls,
     selectedImageUrl,
     detailSectionVisibility,
@@ -142,7 +166,10 @@ const useDetails = (): UseDetailsReturn => {
     productDetailErrorMessage,
     handleSelectImage,
     handleRetry,
-    handleBackPress
+    handleBackPress,
+    handleAddToCart,
+    handleIncrementCartQuantity,
+    handleDecrementCartQuantity
   };
 };
 

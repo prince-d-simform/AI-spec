@@ -9,6 +9,21 @@ import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../theme';
 const styleSheet = (theme: ThemeMode) =>
   StyleSheet.create({
     ...ApplicationStyles(theme),
+    cartErrorText: {
+      color: Colors[theme]?.error,
+      fontSize: scale(12),
+      lineHeight: scale(18),
+      textAlign: 'center'
+    },
+    cartFooter: {
+      backgroundColor: Colors[theme]?.cardBackground,
+      borderTopColor: Colors[theme]?.chipInactive,
+      borderTopWidth: scale(1),
+      paddingBottom: scale(20),
+      paddingHorizontal: scale(16),
+      paddingTop: scale(12),
+      rowGap: scale(10)
+    },
     categoryPill: {
       backgroundColor: Colors[theme]?.chipInactive,
       borderRadius: scale(999),
@@ -135,6 +150,43 @@ const styleSheet = (theme: ThemeMode) =>
       fontSize: scale(24),
       fontWeight: '700'
     },
+    quantityActionButton: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.chipInactive,
+      borderRadius: scale(999),
+      height: scale(48),
+      justifyContent: 'center',
+      width: scale(48)
+    },
+    quantityActionDisabled: {
+      opacity: 0.5
+    },
+    quantityActionIcon: {
+      color: Colors[theme]?.black
+    },
+    quantityFooterWrap: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.cardBackground,
+      columnGap: scale(16),
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    quantityValueLabel: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(11),
+      fontWeight: '600',
+      textTransform: 'uppercase'
+    },
+    quantityValueText: {
+      color: Colors[theme]?.black,
+      fontSize: scale(20),
+      fontWeight: '700'
+    },
+    quantityValueWrap: {
+      alignItems: 'center',
+      flex: 1,
+      rowGap: scale(4)
+    },
     reviewCard: {
       backgroundColor: Colors[theme]?.chipInactive,
       borderRadius: scale(16),
@@ -172,7 +224,7 @@ const styleSheet = (theme: ThemeMode) =>
     },
     scrollContent: {
       padding: scale(16),
-      paddingBottom: scale(32),
+      paddingBottom: scale(48),
       rowGap: scale(16)
     },
     sectionCard: {
