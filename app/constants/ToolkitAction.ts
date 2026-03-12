@@ -7,5 +7,11 @@ export default Object.freeze({
   getAllProducts: 'products/getAllProducts',
   getProductDetail: 'products/getProductDetail',
   getCategoryProducts: 'products/getCategoryProducts',
-  getProductCategories: 'products/getProductCategories'
+  getProductCategories: 'products/getProductCategories',
+  createCart: 'cart/createCart',
+  updateCart: 'cart/updateCart',
+  addProductToCart: 'cart/addProductToCart',
+  incrementCartProduct: 'cart/incrementCartProduct',
+  decrementCartProduct: 'cart/decrementCartProduct',
+  removeCartProduct: 'cart/removeCartProduct'
 });

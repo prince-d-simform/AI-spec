@@ -29,7 +29,27 @@
   "cart": {
     "screenTitle": "Cart",
     "emptyTitle": "Your cart is waiting",
-    "emptyMessage": "This tab is ready for your future cart experience. For now, it is a placeholder landing screen."
+    "emptyMessage": "Add a product from the detail page to start building your cart.",
+    "errorTitle": "Unable to sync cart",
+    "errorMessage": "We couldn't update your cart right now. Your last confirmed cart is still available.",
+    "retryButton": "Try Again",
+    "summaryTitle": "Order summary",
+    "totalProductsLabel": "Products",
+    "totalQuantityLabel": "Units",
+    "subtotalLabel": "Subtotal",
+    "discountedSubtotalLabel": "Discounted subtotal",
+    "discountAmountLabel": "Discount",
+    "taxLabel": "Tax",
+    "shippingLabel": "Shipping",
+    "grandTotalLabel": "Grand total",
+    "unavailableValue": "Unavailable",
+    "productIdLabel": "Product ID",
+    "unitPriceLabel": "Unit price",
+    "lineTotalLabel": "Line total",
+    "discountedLineTotalLabel": "Discounted total",
+    "quantityLabel": "Quantity",
+    "discountLabel": "Discount",
+    "invalidProductMessage": "This product can't be updated in the cart right now."
   },
   "details": {
     "title": "Product Detail",
@@ -68,7 +88,11 @@
     "qrCodeLabel": "QR code",
     "imageUnavailable": "Image unavailable",
     "noReviews": "No reviews available yet.",
-    "discountSuffix": "% off"
+    "discountSuffix": "% off",
+    "addToCartButton": "Add to Cart",
+    "increaseQuantityButton": "Increase quantity",
+    "decreaseQuantityButton": "Decrease quantity",
+    "removeFromCartButton": "Remove from cart"
   },
   "profile": {
     "screenTitle": "Profile",

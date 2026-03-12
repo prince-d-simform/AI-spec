@@ -81,7 +81,27 @@ const Tabs = freezeStringsObject({
 const Cart = freezeStringsObject({
   screenTitle: I18n.t('cart:screenTitle'),
   emptyTitle: I18n.t('cart:emptyTitle'),
-  emptyMessage: I18n.t('cart:emptyMessage')
+  emptyMessage: I18n.t('cart:emptyMessage'),
+  errorTitle: I18n.t('cart:errorTitle'),
+  errorMessage: I18n.t('cart:errorMessage'),
+  retryButton: I18n.t('cart:retryButton'),
+  summaryTitle: I18n.t('cart:summaryTitle'),
+  totalProductsLabel: I18n.t('cart:totalProductsLabel'),
+  totalQuantityLabel: I18n.t('cart:totalQuantityLabel'),
+  subtotalLabel: I18n.t('cart:subtotalLabel'),
+  discountedSubtotalLabel: I18n.t('cart:discountedSubtotalLabel'),
+  discountAmountLabel: I18n.t('cart:discountAmountLabel'),
+  taxLabel: I18n.t('cart:taxLabel'),
+  shippingLabel: I18n.t('cart:shippingLabel'),
+  grandTotalLabel: I18n.t('cart:grandTotalLabel'),
+  unavailableValue: I18n.t('cart:unavailableValue'),
+  productIdLabel: I18n.t('cart:productIdLabel'),
+  unitPriceLabel: I18n.t('cart:unitPriceLabel'),
+  lineTotalLabel: I18n.t('cart:lineTotalLabel'),
+  discountedLineTotalLabel: I18n.t('cart:discountedLineTotalLabel'),
+  quantityLabel: I18n.t('cart:quantityLabel'),
+  discountLabel: I18n.t('cart:discountLabel'),
+  invalidProductMessage: I18n.t('cart:invalidProductMessage')
 });
 
 const Details = freezeStringsObject({
@@ -121,7 +141,11 @@ const Details = freezeStringsObject({
   qrCodeLabel: I18n.t('details:qrCodeLabel'),
   imageUnavailable: I18n.t('details:imageUnavailable'),
   noReviews: I18n.t('details:noReviews'),
-  discountSuffix: I18n.t('details:discountSuffix')
+  discountSuffix: I18n.t('details:discountSuffix'),
+  addToCartButton: I18n.t('details:addToCartButton'),
+  increaseQuantityButton: I18n.t('details:increaseQuantityButton'),
+  decreaseQuantityButton: I18n.t('details:decreaseQuantityButton'),
+  removeFromCartButton: I18n.t('details:removeFromCartButton')
 });
 
 const Profile = freezeStringsObject({

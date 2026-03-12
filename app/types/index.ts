@@ -1,5 +1,6 @@
 export * from './UserResponse';
 export * from './ErrorResponse';
+export * from './CartResponse';
 export type {
   RemoteCategoryProductsResponse,
   RemoteProductDetailResponse,
