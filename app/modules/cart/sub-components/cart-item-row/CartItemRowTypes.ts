@@ -4,5 +4,6 @@ export interface CartItemRowProps {
   item: CartItemRowViewModel;
   onIncrement: (productId: string) => void;
   onDecrement: (productId: string) => void;
+  onPressItem: (productId: string) => void;
   testID?: string;
 }

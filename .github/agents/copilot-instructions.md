@@ -20,6 +20,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-03
 - MMKV-backed redux-persist already exists; extend persistence to include a minimal confirmed `cart` snapshot independent of user id (002-cart-screen-api)
 - TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, React Navigation 6, i18next 23 (001-cart-add-only)
 - MMKV-backed redux-persist for the confirmed cart snapshot and hydration metadata (001-cart-add-only)
+- TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23 (001-fix-cart-item-ui)
+- Existing MMKV-backed redux-persist cart snapshot; no new storage required (001-fix-cart-item-ui)
 
 - TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54 + `react-native` (Text, StyleSheet), `useTheme` hook, `scale()` from Metrics, `Colors`/`ApplicationStyles` from theme barrel (003-text-variant-component)
 
@@ -39,9 +41,9 @@ npm test && npm run lint
 TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54: Follow standard conventions
 
 ## Recent Changes
-- 001-cart-quantity-controls: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, React Navigation 6, i18next 23
-- 001-cart-add-only: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, React Navigation 6, i18next 23
-- 002-cart-screen-api: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, react-redux 9.2, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, Axios 1.10, React Navigation 6, i18next 23, Expo Vector Icons 15
+- 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
+- 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
+- 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
 
 
 <!-- MANUAL ADDITIONS START -->

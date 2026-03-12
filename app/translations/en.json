@@ -51,6 +51,7 @@
     "discountLabel": "Discount",
     "invalidProductMessage": "This product can't be added to the cart right now.",
     "checkoutButton": "Checkout",
+    "openProductDetailsAccessibility": "Open product details",
     "incrementQuantityAccessibility": "Increase quantity",
     "decrementQuantityAccessibility": "Decrease quantity",
     "deleteQuantityAccessibility": "Remove product from cart"
