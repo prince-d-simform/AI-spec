@@ -8,11 +8,6 @@ export interface AddCartRequest {
   products: CartRequestProductInput[];
 }
 
-export interface UpdateCartRequest {
-  merge?: boolean;
-  products: CartRequestProductInput[];
-}
-
 export interface RemoteCartProductResponse {
   id: number;
   title: string;

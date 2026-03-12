@@ -1,10 +1,8 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import React, { memo, useCallback } from 'react';
-import { Image, Pressable, View } from 'react-native';
-import { Spinner, Text } from '../../../../components';
+import React, { memo } from 'react';
+import { Image, View } from 'react-native';
+import { Text } from '../../../../components';
 import { Strings } from '../../../../constants';
 import { useTheme } from '../../../../hooks';
-import { scale } from '../../../../theme';
 import styleSheet from './CartItemRowStyles';
 import type { CartItemRowProps } from './CartItemRowTypes';
 
@@ -14,22 +12,8 @@ import type { CartItemRowProps } from './CartItemRowTypes';
  * @param {CartItemRowProps} props - Row props.
  * @returns {React.ReactElement} Cart row.
  */
-const CartItemRow = ({
-  item,
-  onIncrement,
-  onDecrement,
-  testID,
-  controlHitSlop
-}: CartItemRowProps) => {
+const CartItemRow = ({ item, testID }: CartItemRowProps) => {
   const { styles } = useTheme(styleSheet);
-
-  const handleIncrement = useCallback(() => {
-    onIncrement(item.productId);
-  }, [item.productId, onIncrement]);
-
-  const handleDecrement = useCallback(() => {
-    onDecrement(item.productId, item.quantity);
-  }, [item.productId, item.quantity, onDecrement]);
 
   return (
     <View style={styles.container} testID={testID}>
@@ -53,6 +37,11 @@ const CartItemRow = ({
           </View>
           <View style={styles.metaChip}>
             <Text style={styles.metaChipText}>
+              {Strings.Cart.quantityLabel}: {item.quantity}
+            </Text>
+          </View>
+          <View style={styles.metaChip}>
+            <Text style={styles.metaChipText}>
               {Strings.Cart.discountLabel}: {item.discountValue}
             </Text>
           </View>
@@ -69,47 +58,6 @@ const CartItemRow = ({
             {Strings.Cart.discountedLineTotalLabel}: {item.discountedTotalValue}
           </Text>
         ) : null}
-
-        <View style={styles.controlsRow}>
-          <View style={styles.quantityControls}>
-            <Pressable
-              accessibilityLabel={
-                item.quantity <= 1
-                  ? Strings.Details.removeFromCartButton
-                  : Strings.Details.decreaseQuantityButton
-              }
-              accessibilityRole="button"
-              disabled={item.isMutating}
-              hitSlop={controlHitSlop ?? scale(8)}
-              style={[styles.controlButton, item.isMutating ? styles.disabledControl : undefined]}
-              onPress={handleDecrement}
-            >
-              <Ionicons
-                color={styles.priceText.color}
-                name={item.quantity <= 1 ? 'trash-outline' : 'remove'}
-                size={scale(18)}
-              />
-            </Pressable>
-            <Text style={styles.quantityText}>{item.quantity}</Text>
-            <Pressable
-              accessibilityLabel={Strings.Details.increaseQuantityButton}
-              accessibilityRole="button"
-              disabled={item.isMutating}
-              hitSlop={controlHitSlop ?? scale(8)}
-              style={[styles.controlButton, item.isMutating ? styles.disabledControl : undefined]}
-              onPress={handleIncrement}
-            >
-              {item.isMutating ? (
-                <Spinner color={styles.priceText.color} size="small" />
-              ) : (
-                <Ionicons color={styles.priceText.color} name="add" size={scale(18)} />
-              )}
-            </Pressable>
-          </View>
-          <Text style={styles.summaryText}>
-            {Strings.Cart.quantityLabel}: {item.quantity}
-          </Text>
-        </View>
       </View>
     </View>
   );

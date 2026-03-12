@@ -8,10 +8,6 @@ export default Object.freeze({
   getProductDetail: 'products/getProductDetail',
   getCategoryProducts: 'products/getCategoryProducts',
   getProductCategories: 'products/getProductCategories',
-  createCart: 'cart/createCart',
-  updateCart: 'cart/updateCart',
-  addProductToCart: 'cart/addProductToCart',
-  incrementCartProduct: 'cart/incrementCartProduct',
-  decrementCartProduct: 'cart/decrementCartProduct',
-  removeCartProduct: 'cart/removeCartProduct'
+  confirmCart: 'cart/confirmCart',
+  addProductToCart: 'cart/addProductToCart'
 });

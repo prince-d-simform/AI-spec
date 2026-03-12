@@ -28,8 +28,6 @@ const CartScreen: FC = (): React.ReactElement => {
     recoveryContent,
     cartErrorMessage,
     getItemLayout,
-    handleIncrement,
-    handleDecrement,
     handleRetry
   } = useCart();
 
@@ -49,10 +47,8 @@ const CartScreen: FC = (): React.ReactElement => {
   );
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<CartItemRowViewModel>) => (
-      <CartItemRow item={item} onDecrement={handleDecrement} onIncrement={handleIncrement} />
-    ),
-    [handleDecrement, handleIncrement]
+    ({ item }: ListRenderItemInfo<CartItemRowViewModel>) => <CartItemRow item={item} />,
+    []
   );
 
   const keyExtractor = useCallback((item: CartItemRowViewModel) => item.productId, []);
