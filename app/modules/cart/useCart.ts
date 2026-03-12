@@ -93,9 +93,6 @@ const useCart = (): UseCartReturn => {
   const totalQuantity = useAppSelector(CartSelectors.getCartTotalQuantity);
   const cartError = useAppSelector(CartSelectors.getCartError);
   const isCartLoading = useAppSelector(CartSelectors.getCartLoading);
-  const activeMutationProductIds = useAppSelector(
-    (state) => CartSelectors.getCart(state).activeMutationProductIds
-  );
 
   const emptyStateContent = useMemo<CartEmptyStateContent>(
     () => ({
@@ -128,10 +125,9 @@ const useCart = (): UseCartReturn => {
           ? formatCurrency(item.lineDiscountedTotal)
           : undefined,
         discountValue: `${item.discountPercentage.toFixed(2)}%`,
-        thumbnailUrl: item.thumbnailUrl,
-        isMutating: activeMutationProductIds.includes(item.productId)
+        thumbnailUrl: item.thumbnailUrl
       })),
-    [activeMutationProductIds, cartItems]
+    [cartItems]
   );
 
   const summaryRows = useMemo<CartSummaryRow[]>(
@@ -146,25 +142,6 @@ const useCart = (): UseCartReturn => {
             : false
       })),
     [cartSummary]
-  );
-
-  const handleIncrement = useCallback(
-    (productId: string): void => {
-      dispatch(CartActions.incrementCartProduct({ productId }));
-    },
-    [dispatch]
-  );
-
-  const handleDecrement = useCallback(
-    (productId: string, quantity: number): void => {
-      if (quantity <= 1) {
-        dispatch(CartActions.removeCartProduct({ productId }));
-        return;
-      }
-
-      dispatch(CartActions.decrementCartProduct({ productId }));
-    },
-    [dispatch]
   );
 
   const handleRetry = useCallback((): void => {
@@ -191,8 +168,6 @@ const useCart = (): UseCartReturn => {
     recoveryContent,
     cartErrorMessage: cartError?.message?.trim(),
     getItemLayout,
-    handleIncrement,
-    handleDecrement,
     handleRetry
   };
 };

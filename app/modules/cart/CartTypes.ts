@@ -24,7 +24,6 @@ export interface CartItemRowViewModel {
   discountedTotalValue?: string;
   discountValue: string;
   thumbnailUrl?: string;
-  isMutating: boolean;
 }
 
 export interface CartSummaryRow {
@@ -48,7 +47,5 @@ export interface UseCartReturn {
     data: ArrayLike<CartItemRowViewModel> | null | undefined,
     index: number
   ) => { length: number; offset: number; index: number };
-  handleIncrement: (productId: string) => void;
-  handleDecrement: (productId: string, quantity: number) => void;
   handleRetry: () => void;
 }

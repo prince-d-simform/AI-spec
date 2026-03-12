@@ -47,8 +47,6 @@ interface CartFooterProps {
   cartControlState: ProductDetailCartControlState;
   cartErrorMessage?: string;
   handleAddToCart: () => void;
-  handleIncrementCartQuantity: () => void;
-  handleDecrementCartQuantity: () => void;
 }
 
 /**
@@ -242,9 +240,7 @@ function renderCartFooter({
   styles,
   cartControlState,
   cartErrorMessage,
-  handleAddToCart,
-  handleIncrementCartQuantity,
-  handleDecrementCartQuantity
+  handleAddToCart
 }: CartFooterProps): React.ReactElement {
   return (
     <View style={styles.cartFooter}>
@@ -256,49 +252,18 @@ function renderCartFooter({
           onPress={handleAddToCart}
         />
       ) : (
-        <View style={styles.quantityFooterWrap}>
-          <Pressable
-            accessibilityLabel={
-              cartControlState.quantity <= 1
-                ? Strings.Details.removeFromCartButton
-                : Strings.Details.decreaseQuantityButton
-            }
-            accessibilityRole="button"
-            disabled={cartControlState.isMutating}
-            hitSlop={scale(8)}
-            style={[
-              styles.quantityActionButton,
-              cartControlState.isMutating ? styles.quantityActionDisabled : undefined
-            ]}
-            onPress={handleDecrementCartQuantity}
-          >
-            <Ionicons
-              color={styles.quantityActionIcon.color}
-              name={cartControlState.quantity <= 1 ? 'trash-outline' : 'remove'}
-              size={scale(20)}
-            />
-          </Pressable>
-          <View style={styles.quantityValueWrap}>
-            <Text style={styles.quantityValueText}>{cartControlState.quantity}</Text>
-            <Text style={styles.quantityValueLabel}>{Strings.Cart.quantityLabel}</Text>
+        <View style={styles.addedStateCard}>
+          <View style={styles.addedStateIconWrap}>
+            <Ionicons color={styles.addedStateIcon.color} name="checkmark" size={scale(22)} />
           </View>
-          <Pressable
-            accessibilityLabel={Strings.Details.increaseQuantityButton}
-            accessibilityRole="button"
-            disabled={cartControlState.isMutating}
-            hitSlop={scale(8)}
-            style={[
-              styles.quantityActionButton,
-              cartControlState.isMutating ? styles.quantityActionDisabled : undefined
-            ]}
-            onPress={handleIncrementCartQuantity}
-          >
-            {cartControlState.isMutating ? (
-              <Spinner color={styles.quantityActionIcon.color} size="small" />
-            ) : (
-              <Ionicons color={styles.quantityActionIcon.color} name="add" size={scale(20)} />
-            )}
-          </Pressable>
+          <View style={styles.addedStateTextWrap}>
+            <Text style={styles.addedStateTitle}>{Strings.Details.addedToCartTitle}</Text>
+            <Text style={styles.addedStateMessage}>{Strings.Details.addedToCartMessage}</Text>
+          </View>
+          <View style={styles.addedStateQuantityWrap}>
+            <Text style={styles.addedStateQuantityValue}>{cartControlState.quantity}</Text>
+            <Text style={styles.addedStateQuantityLabel}>{Strings.Cart.quantityLabel}</Text>
+          </View>
         </View>
       )}
     </View>
@@ -329,9 +294,7 @@ const DetailScreen: FC = (): React.ReactElement => {
     handleSelectImage,
     handleRetry,
     handleBackPress,
-    handleAddToCart,
-    handleIncrementCartQuantity,
-    handleDecrementCartQuantity
+    handleAddToCart
   } = useDetails();
 
   const renderHeader = useCallback(
@@ -446,9 +409,7 @@ const DetailScreen: FC = (): React.ReactElement => {
         styles,
         cartControlState,
         cartErrorMessage,
-        handleAddToCart,
-        handleIncrementCartQuantity,
-        handleDecrementCartQuantity
+        handleAddToCart
       })}
     </View>
   );

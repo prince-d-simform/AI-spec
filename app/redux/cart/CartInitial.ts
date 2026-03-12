@@ -2,7 +2,7 @@ import type { ErrorResponse } from '../../types';
 
 export type CartPricingStatus = 'complete' | 'partial';
 export type CartSnapshotSource = 'api' | 'local-fallback';
-export type CartFailedOperation = 'hydrate' | 'create' | 'update';
+export type CartFailedOperation = 'hydrate' | 'add';
 
 export interface CartItem {
   productId: string;

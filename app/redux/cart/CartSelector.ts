@@ -62,7 +62,7 @@ const CartSelectors: CartSelectorsType = {
       0;
 
     return {
-      mode: quantity > 0 ? 'quantity' : 'add',
+      mode: quantity > 0 ? 'added' : 'add',
       quantity,
       isMutating: getCartState(state).activeMutationProductIds.includes(productId)
     };

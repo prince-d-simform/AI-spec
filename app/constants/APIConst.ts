@@ -8,6 +8,5 @@ export default Object.freeze({
   productDetail: '/products/{id}',
   productsByCategory: '/products/category/{slug}',
   productCategories: '/products/categories',
-  cartAdd: '/carts/add',
-  cartUpdate: '/carts/{cartId}'
+  cartAdd: '/carts/add'
 });

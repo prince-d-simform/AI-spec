@@ -16,8 +16,7 @@ import type {
   CartRequestProductInput,
   ErrorResponse,
   RemoteCartProductResponse,
-  RemoteCartResponse,
-  UpdateCartRequest
+  RemoteCartResponse
 } from '../../types';
 import type { AppDispatchType, RootStateType } from '../Store';
 
@@ -42,22 +41,12 @@ interface CartMutationThunkApi {
 }
 
 /**
- * Raw API thunk for initial cart creation.
+ * Raw API thunk for add-only cart confirmation.
  */
-const createCartRequest = createAsyncThunkWithCancelToken<RemoteCartResponse>(
-  ToolkitAction.createCart,
+const confirmCartRequest = createAsyncThunkWithCancelToken<RemoteCartResponse>(
+  ToolkitAction.confirmCart,
   'POST',
   APIConst.cartAdd,
-  unauthorizedAPI
-);
-
-/**
- * Raw API thunk for cart updates after a cart id exists.
- */
-const updateCartRequest = createAsyncThunkWithCancelToken<RemoteCartResponse>(
-  ToolkitAction.updateCart,
-  'PUT',
-  APIConst.cartUpdate,
   unauthorizedAPI
 );
 
@@ -217,41 +206,57 @@ function finishMutation(state: Draft<CartStateType>, productId: string): void {
 }
 
 /**
- * Builds a full replacement cart payload for decrement and removal flows.
+ * Builds the full add-only cart payload for the next confirmation.
  *
- * @param {CartSnapshot} snapshot - Confirmed cart snapshot.
+ * @param {CartSnapshot | undefined} snapshot - Confirmed cart snapshot.
  * @param {string} productId - Target product identifier.
- * @param {number} nextQuantity - Desired next quantity.
- * @returns {CartRequestProductInput[]} Replacement payload.
+ * @param {number} quantity - Requested quantity for a newly added product.
+ * @returns {CartRequestProductInput[]} Full desired confirmed cart payload.
  */
-function buildReplacementProducts(
-  snapshot: CartSnapshot,
+function buildAddOnlyProducts(
+  snapshot: CartSnapshot | undefined,
   productId: string,
-  nextQuantity: number
+  quantity: number
 ): CartRequestProductInput[] {
-  return snapshot.items.reduce<CartRequestProductInput[]>((products, item) => {
-    const quantity = item.productId === productId ? nextQuantity : item.quantity;
+  const normalizedProductId = normalizeText(productId);
+  const numericProductId = Number(normalizedProductId);
 
-    if (quantity > 0) {
+  if (!normalizedProductId || !Number.isFinite(numericProductId) || quantity < 1) {
+    return [];
+  }
+
+  const currentProducts =
+    snapshot?.items.reduce<CartRequestProductInput[]>((products, item) => {
+      const itemId = Number(item.productId);
+
+      if (!Number.isFinite(itemId) || item.quantity < 1) {
+        return products;
+      }
+
       products.push({
-        id: Number(item.productId),
-        quantity
+        id: itemId,
+        quantity: item.quantity
       });
-    }
 
-    return products;
-  }, []);
+      return products;
+    }, []) ?? [];
+
+  if (currentProducts.some((item) => item.id === numericProductId)) {
+    return currentProducts;
+  }
+
+  return [...currentProducts, { id: numericProductId, quantity }];
 }
 
 /**
- * Executes the additive create-or-update cart flow.
+ * Executes the add-only cart confirmation flow.
  *
  * @param {CartMutationThunkApi} thunkApi - Thunk helpers.
  * @param {string} productId - Target product identifier.
  * @param {number} quantity - Quantity to add.
  * @returns {Promise<CartSnapshot>} Normalized snapshot.
  */
-async function syncAdditiveMutation(
+async function syncAddOnlyMutation(
   thunkApi: CartMutationThunkApi,
   productId: string,
   quantity: number
@@ -264,33 +269,26 @@ async function syncAdditiveMutation(
     throw getErrorResponse(Strings.Cart.invalidProductMessage);
   }
 
+  const products = buildAddOnlyProducts(snapshot, normalizedProductId, quantity);
+
+  if (!products.length) {
+    throw getErrorResponse(Strings.Cart.invalidProductMessage);
+  }
+
   const requestBody: AddCartRequest = {
     userId: CART_DUMMY_USER_ID,
-    products: [{ id: numericProductId, quantity }]
+    products
   };
 
   try {
-    const response = snapshot?.cartId
-      ? await thunkApi
-          .dispatch(
-            updateCartRequest({
-              paths: { cartId: snapshot.cartId },
-              data: {
-                merge: true,
-                products: requestBody.products
-              } satisfies UpdateCartRequest,
-              shouldShowToast: false
-            })
-          )
-          .unwrap()
-      : await thunkApi
-          .dispatch(
-            createCartRequest({
-              data: requestBody,
-              shouldShowToast: false
-            })
-          )
-          .unwrap();
+    const response = await thunkApi
+      .dispatch(
+        confirmCartRequest({
+          data: requestBody,
+          shouldShowToast: false
+        })
+      )
+      .unwrap();
 
     return normalizeCartSnapshot(response);
   } catch (error) {
@@ -316,106 +314,7 @@ const addProductToCart = createAsyncThunk<CartSnapshot, CartMutationArgs, CartTh
   ToolkitAction.addProductToCart,
   async ({ productId, quantity = 1 }, thunkApi) => {
     try {
-      return await syncAdditiveMutation(thunkApi, productId, quantity);
-    } catch (error) {
-      return thunkApi.rejectWithValue(toErrorResponse(error));
-    }
-  },
-  {
-    condition: ({ productId }, { getState }) => canMutateProduct(getState(), productId)
-  }
-);
-
-/**
- * Increments one product quantity through the cart API.
- */
-const incrementCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
-  ToolkitAction.incrementCartProduct,
-  async ({ productId }, thunkApi) => {
-    try {
-      return await syncAdditiveMutation(thunkApi, productId, 1);
-    } catch (error) {
-      return thunkApi.rejectWithValue(toErrorResponse(error));
-    }
-  },
-  {
-    condition: ({ productId }, { getState }) => canMutateProduct(getState(), productId)
-  }
-);
-
-/**
- * Decrements one product quantity through a replacement cart update.
- */
-const decrementCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
-  ToolkitAction.decrementCartProduct,
-  async ({ productId }, thunkApi) => {
-    const normalizedProductId = normalizeText(productId);
-    const snapshot = thunkApi.getState().cart?.snapshot;
-    const currentItem = snapshot?.items.find(
-      (item: CartItem) => item.productId === normalizedProductId
-    );
-
-    if (!snapshot?.cartId || !currentItem) {
-      return thunkApi.rejectWithValue(getErrorResponse(Strings.Cart.invalidProductMessage));
-    }
-
-    try {
-      const response = await thunkApi
-        .dispatch(
-          updateCartRequest({
-            paths: { cartId: snapshot.cartId },
-            data: {
-              products: buildReplacementProducts(
-                snapshot,
-                normalizedProductId,
-                currentItem.quantity - 1
-              )
-            } satisfies UpdateCartRequest,
-            shouldShowToast: false
-          })
-        )
-        .unwrap();
-
-      return normalizeCartSnapshot(response);
-    } catch (error) {
-      return thunkApi.rejectWithValue(toErrorResponse(error));
-    }
-  },
-  {
-    condition: ({ productId }, { getState }) => canMutateProduct(getState(), productId)
-  }
-);
-
-/**
- * Removes one product line through a replacement cart update.
- */
-const removeCartProduct = createAsyncThunk<CartSnapshot, CartMutationArgs, CartThunkConfig>(
-  ToolkitAction.removeCartProduct,
-  async ({ productId }, thunkApi) => {
-    const normalizedProductId = normalizeText(productId);
-    const snapshot = thunkApi.getState().cart?.snapshot;
-    const currentItem = snapshot?.items.find(
-      (item: CartItem) => item.productId === normalizedProductId
-    );
-
-    if (!snapshot?.cartId || !currentItem) {
-      return thunkApi.rejectWithValue(getErrorResponse(Strings.Cart.invalidProductMessage));
-    }
-
-    try {
-      const response = await thunkApi
-        .dispatch(
-          updateCartRequest({
-            paths: { cartId: snapshot.cartId },
-            data: {
-              products: buildReplacementProducts(snapshot, normalizedProductId, 0)
-            } satisfies UpdateCartRequest,
-            shouldShowToast: false
-          })
-        )
-        .unwrap();
-
-      return normalizeCartSnapshot(response);
+      return await syncAddOnlyMutation(thunkApi, productId, quantity);
     } catch (error) {
       return thunkApi.rejectWithValue(toErrorResponse(error));
     }
@@ -467,12 +366,12 @@ const cartSlice = createSlice({
         state.isCartLoading = false;
         state.activeMutationProductIds = [];
         state.cartError = undefined;
-        state.lastFailedOperation = inboundCartState?.snapshot ? 'hydrate' : undefined;
+        state.lastFailedOperation = undefined;
       }
     );
 
     builder.addCase(addProductToCart.pending, (state, action) => {
-      startMutation(state, normalizeText(action.meta.arg.productId), 'create');
+      startMutation(state, normalizeText(action.meta.arg.productId), 'add');
     });
     builder.addCase(addProductToCart.fulfilled, (state, action) => {
       state.snapshot = action.payload;
@@ -483,55 +382,7 @@ const cartSlice = createSlice({
     });
     builder.addCase(addProductToCart.rejected, (state, action) => {
       state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
-      state.lastFailedOperation = 'create';
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-
-    builder.addCase(incrementCartProduct.pending, (state, action) => {
-      startMutation(state, normalizeText(action.meta.arg.productId), 'update');
-    });
-    builder.addCase(incrementCartProduct.fulfilled, (state, action) => {
-      state.snapshot = action.payload;
-      state.isHydrated = true;
-      state.cartError = undefined;
-      state.lastFailedOperation = undefined;
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-    builder.addCase(incrementCartProduct.rejected, (state, action) => {
-      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
-      state.lastFailedOperation = 'update';
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-
-    builder.addCase(decrementCartProduct.pending, (state, action) => {
-      startMutation(state, normalizeText(action.meta.arg.productId), 'update');
-    });
-    builder.addCase(decrementCartProduct.fulfilled, (state, action) => {
-      state.snapshot = action.payload;
-      state.isHydrated = true;
-      state.cartError = undefined;
-      state.lastFailedOperation = undefined;
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-    builder.addCase(decrementCartProduct.rejected, (state, action) => {
-      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
-      state.lastFailedOperation = 'update';
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-
-    builder.addCase(removeCartProduct.pending, (state, action) => {
-      startMutation(state, normalizeText(action.meta.arg.productId), 'update');
-    });
-    builder.addCase(removeCartProduct.fulfilled, (state, action) => {
-      state.snapshot = action.payload;
-      state.isHydrated = true;
-      state.cartError = undefined;
-      state.lastFailedOperation = undefined;
-      finishMutation(state, normalizeText(action.meta.arg.productId));
-    });
-    builder.addCase(removeCartProduct.rejected, (state, action) => {
-      state.cartError = action.payload ?? getErrorResponse(Strings.APIError.somethingWentWrong);
-      state.lastFailedOperation = 'update';
+      state.lastFailedOperation = 'add';
       finishMutation(state, normalizeText(action.meta.arg.productId));
     });
   }
@@ -541,9 +392,5 @@ export const CartReducer = cartSlice.reducer;
 export const CartActions = {
   ...cartSlice.actions,
   addProductToCart,
-  createCartRequest,
-  decrementCartProduct,
-  incrementCartProduct,
-  removeCartProduct,
-  updateCartRequest
+  confirmCartRequest
 };

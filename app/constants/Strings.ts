@@ -143,9 +143,8 @@ const Details = freezeStringsObject({
   noReviews: I18n.t('details:noReviews'),
   discountSuffix: I18n.t('details:discountSuffix'),
   addToCartButton: I18n.t('details:addToCartButton'),
-  increaseQuantityButton: I18n.t('details:increaseQuantityButton'),
-  decreaseQuantityButton: I18n.t('details:decreaseQuantityButton'),
-  removeFromCartButton: I18n.t('details:removeFromCartButton')
+  addedToCartTitle: I18n.t('details:addedToCartTitle'),
+  addedToCartMessage: I18n.t('details:addedToCartMessage')
 });
 
 const Profile = freezeStringsObject({

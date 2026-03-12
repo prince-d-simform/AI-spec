@@ -31,7 +31,7 @@
     "emptyTitle": "Your cart is waiting",
     "emptyMessage": "Add a product from the detail page to start building your cart.",
     "errorTitle": "Unable to sync cart",
-    "errorMessage": "We couldn't update your cart right now. Your last confirmed cart is still available.",
+    "errorMessage": "We couldn't sync your cart right now. Your last confirmed cart is still available.",
     "retryButton": "Try Again",
     "summaryTitle": "Order summary",
     "totalProductsLabel": "Products",
@@ -49,7 +49,7 @@
     "discountedLineTotalLabel": "Discounted total",
     "quantityLabel": "Quantity",
     "discountLabel": "Discount",
-    "invalidProductMessage": "This product can't be updated in the cart right now."
+    "invalidProductMessage": "This product can't be added to the cart right now."
   },
   "details": {
     "title": "Product Detail",
@@ -90,9 +90,8 @@
     "noReviews": "No reviews available yet.",
     "discountSuffix": "% off",
     "addToCartButton": "Add to Cart",
-    "increaseQuantityButton": "Increase quantity",
-    "decreaseQuantityButton": "Decrease quantity",
-    "removeFromCartButton": "Remove from cart"
+    "addedToCartTitle": "Added to cart",
+    "addedToCartMessage": "This product is part of your confirmed cart."
   },
   "profile": {
     "screenTitle": "Profile",

@@ -22,23 +22,9 @@ const styleSheet = (theme: ThemeMode) =>
       shadowOpacity: 1,
       shadowRadius: scale(8)
     },
-    controlButton: {
-      alignItems: 'center',
-      height: scale(36),
-      justifyContent: 'center',
-      width: scale(36)
-    },
-    controlsRow: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      justifyContent: 'space-between'
-    },
     details: {
       flex: 1,
       gap: scale(10)
-    },
-    disabledControl: {
-      opacity: 0.4
     },
     metaChip: {
       backgroundColor: Colors[theme]?.chipInactive,
@@ -60,22 +46,6 @@ const styleSheet = (theme: ThemeMode) =>
       color: Colors[theme]?.black,
       fontSize: scale(14),
       fontWeight: '600'
-    },
-    quantityControls: {
-      alignItems: 'center',
-      backgroundColor: Colors[theme]?.chipInactive,
-      borderRadius: scale(999),
-      flexDirection: 'row',
-      gap: scale(4),
-      paddingHorizontal: scale(6),
-      paddingVertical: scale(4)
-    },
-    quantityText: {
-      color: Colors[theme]?.black,
-      fontSize: scale(15),
-      fontWeight: '700',
-      minWidth: scale(28),
-      textAlign: 'center'
     },
     summaryText: {
       color: Colors[theme]?.gray,

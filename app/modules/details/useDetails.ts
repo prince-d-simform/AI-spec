@@ -136,21 +136,12 @@ const useDetails = (): UseDetailsReturn => {
   }, []);
 
   const handleAddToCart = useCallback((): void => {
-    dispatch(CartActions.addProductToCart({ productId: id }));
-  }, [dispatch, id]);
-
-  const handleIncrementCartQuantity = useCallback((): void => {
-    dispatch(CartActions.incrementCartProduct({ productId: id }));
-  }, [dispatch, id]);
-
-  const handleDecrementCartQuantity = useCallback((): void => {
-    if (cartControlState.quantity <= 1) {
-      dispatch(CartActions.removeCartProduct({ productId: id }));
+    if (cartControlState.mode === 'added' || cartControlState.isMutating) {
       return;
     }
 
-    dispatch(CartActions.decrementCartProduct({ productId: id }));
-  }, [cartControlState.quantity, dispatch, id]);
+    dispatch(CartActions.addProductToCart({ productId: id }));
+  }, [cartControlState.isMutating, cartControlState.mode, dispatch, id]);
 
   return {
     productId: id,
@@ -167,9 +158,7 @@ const useDetails = (): UseDetailsReturn => {
     handleSelectImage,
     handleRetry,
     handleBackPress,
-    handleAddToCart,
-    handleIncrementCartQuantity,
-    handleDecrementCartQuantity
+    handleAddToCart
   };
 };
 

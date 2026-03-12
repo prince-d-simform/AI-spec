@@ -3,7 +3,7 @@ export interface ProductDetailRouteParams {
 }
 
 export interface ProductDetailCartControlState {
-  mode: 'add' | 'quantity';
+  mode: 'add' | 'added';
   quantity: number;
   isMutating: boolean;
 }
@@ -79,6 +79,4 @@ export interface UseDetailsReturn {
   handleRetry: () => void;
   handleBackPress: () => void;
   handleAddToCart: () => void;
-  handleIncrementCartQuantity: () => void;
-  handleDecrementCartQuantity: () => void;
 }
