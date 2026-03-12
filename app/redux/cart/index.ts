@@ -1,5 +1,6 @@
 export { default as CartSelectors } from './CartSelector';
 export type {
+  CartDisplayPricingSummary,
   CartFailedOperation,
   CartItem,
   CartPricingSummary,

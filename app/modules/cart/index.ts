@@ -5,5 +5,6 @@ export type {
   CartItemRowViewModel,
   CartRecoveryContent,
   CartSummaryRow,
+  CheckoutCallToActionState,
   UseCartReturn
 } from './CartTypes';

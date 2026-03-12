@@ -39,9 +39,9 @@ npm test && npm run lint
 TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54: Follow standard conventions
 
 ## Recent Changes
+- 001-cart-quantity-controls: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, React Navigation 6, i18next 23
 - 001-cart-add-only: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, React Navigation 6, i18next 23
 - 002-cart-screen-api: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + Redux Toolkit 2.5, react-redux 9.2, redux-persist 6, react-native-mmkv 3.3, Apisauce 3.2, Axios 1.10, React Navigation 6, i18next 23, Expo Vector Icons 15
-- 001-home-header-inset: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Native Safe Area Context 5.6.1, React Navigation 6, i18next 23, existing `useHeader.ts` safe-area helpers, theme utilities in `app/theme/`
 
 
 <!-- MANUAL ADDITIONS START -->

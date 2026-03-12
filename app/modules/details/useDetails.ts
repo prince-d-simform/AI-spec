@@ -136,12 +136,39 @@ const useDetails = (): UseDetailsReturn => {
   }, []);
 
   const handleAddToCart = useCallback((): void => {
-    if (cartControlState.mode === 'added' || cartControlState.isMutating) {
+    if (cartControlState.mode !== 'add' || cartControlState.isDisabled) {
       return;
     }
 
     dispatch(CartActions.addProductToCart({ productId: id }));
-  }, [cartControlState.isMutating, cartControlState.mode, dispatch, id]);
+  }, [cartControlState.isDisabled, cartControlState.mode, dispatch, id]);
+
+  const handleIncrementCart = useCallback((): void => {
+    if (cartControlState.mode !== 'quantity' || cartControlState.isDisabled) {
+      return;
+    }
+
+    dispatch(CartActions.incrementCartProduct({ productId: id }));
+  }, [cartControlState.isDisabled, cartControlState.mode, dispatch, id]);
+
+  const handleDecrementCart = useCallback((): void => {
+    if (cartControlState.mode !== 'quantity' || cartControlState.isDisabled) {
+      return;
+    }
+
+    if (cartControlState.decrementAction === 'delete') {
+      dispatch(CartActions.removeCartProduct({ productId: id }));
+      return;
+    }
+
+    dispatch(CartActions.decrementCartProduct({ productId: id }));
+  }, [
+    cartControlState.decrementAction,
+    cartControlState.isDisabled,
+    cartControlState.mode,
+    dispatch,
+    id
+  ]);
 
   return {
     productId: id,
@@ -158,7 +185,9 @@ const useDetails = (): UseDetailsReturn => {
     handleSelectImage,
     handleRetry,
     handleBackPress,
-    handleAddToCart
+    handleAddToCart,
+    handleIncrementCart,
+    handleDecrementCart
   };
 };
 

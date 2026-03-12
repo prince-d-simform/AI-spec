@@ -20,6 +20,7 @@ const CartScreen: FC = (): React.ReactElement => {
   const {
     cartItems,
     summaryRows,
+    checkoutAction,
     totalProducts,
     totalQuantity,
     isCartLoading,
@@ -28,7 +29,10 @@ const CartScreen: FC = (): React.ReactElement => {
     recoveryContent,
     cartErrorMessage,
     getItemLayout,
-    handleRetry
+    handleRetry,
+    handleIncrementCartItem,
+    handleDecrementCartItem,
+    handleCheckout
   } = useCart();
 
   const renderCenteredState = useCallback(
@@ -47,8 +51,14 @@ const CartScreen: FC = (): React.ReactElement => {
   );
 
   const renderItem = useCallback(
-    ({ item }: ListRenderItemInfo<CartItemRowViewModel>) => <CartItemRow item={item} />,
-    []
+    ({ item }: ListRenderItemInfo<CartItemRowViewModel>) => (
+      <CartItemRow
+        item={item}
+        onDecrement={handleDecrementCartItem}
+        onIncrement={handleIncrementCartItem}
+      />
+    ),
+    [handleDecrementCartItem, handleIncrementCartItem]
   );
 
   const keyExtractor = useCallback((item: CartItemRowViewModel) => item.productId, []);
@@ -106,9 +116,11 @@ const CartScreen: FC = (): React.ReactElement => {
           keyExtractor={keyExtractor}
           ListFooterComponent={
             <CartSummary
+              checkoutAction={checkoutAction}
               rows={summaryRows}
               totalProducts={totalProducts}
               totalQuantity={totalQuantity}
+              onCheckout={handleCheckout}
             />
           }
           ListHeaderComponent={renderListHeader}

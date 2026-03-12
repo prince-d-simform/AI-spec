@@ -1,6 +1,6 @@
 export const CART_DUMMY_USER_ID = 1;
 
-export const CART_LIST_ITEM_HEIGHT = 188;
+export const CART_LIST_ITEM_HEIGHT = 220;
 
 export const CART_SUMMARY_ROW_KEYS = Object.freeze([
   'subtotal',

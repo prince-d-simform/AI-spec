@@ -19,11 +19,14 @@ export interface CartItemRowViewModel {
   title: string;
   productIdValue: string;
   quantity: number;
+  decrementAction: 'minus' | 'delete';
   unitPriceValue: string;
   lineTotalValue: string;
   discountedTotalValue?: string;
   discountValue: string;
   thumbnailUrl?: string;
+  isMutating: boolean;
+  isDisabled: boolean;
 }
 
 export interface CartSummaryRow {
@@ -33,9 +36,16 @@ export interface CartSummaryRow {
   isUnavailable?: boolean;
 }
 
+export interface CheckoutCallToActionState {
+  isVisible: boolean;
+  isDisabled: boolean;
+  label: string;
+}
+
 export interface UseCartReturn {
   cartItems: CartItemRowViewModel[];
   summaryRows: CartSummaryRow[];
+  checkoutAction: CheckoutCallToActionState;
   totalProducts: number;
   totalQuantity: number;
   isCartLoading: boolean;
@@ -48,4 +58,7 @@ export interface UseCartReturn {
     index: number
   ) => { length: number; offset: number; index: number };
   handleRetry: () => void;
+  handleIncrementCartItem: (productId: string) => void;
+  handleDecrementCartItem: (productId: string) => void;
+  handleCheckout: () => void;
 }

@@ -9,6 +9,7 @@ import type {
   CartItemRowViewModel,
   CartRecoveryContent,
   CartSummaryRow,
+  CheckoutCallToActionState,
   UseCartReturn
 } from './CartTypes';
 
@@ -18,12 +19,8 @@ import type {
  * @param {number | undefined} value - Numeric value to format.
  * @returns {string} Currency label.
  */
-function formatCurrency(value?: number): string {
-  if (!Number.isFinite(value)) {
-    return Strings.Cart.unavailableValue;
-  }
-
-  return `${Strings.Home.pricePrefix}${Number(value).toFixed(2)}`;
+function formatCurrency(value: number): string {
+  return `${Strings.Home.pricePrefix}${value.toFixed(2)}`;
 }
 
 /**
@@ -35,23 +32,23 @@ function formatCurrency(value?: number): string {
  */
 function formatSummaryRowValue(
   key: CartSummaryRowKey,
-  summary: ReturnType<typeof CartSelectors.getCartSummary>
+  summary: ReturnType<typeof CartSelectors.getCartDisplaySummary>
 ): string {
   switch (key) {
     case 'subtotal':
-      return formatCurrency(summary?.subtotal);
+      return formatCurrency(summary.subtotal);
     case 'discountedSubtotal':
-      return formatCurrency(summary?.discountedSubtotal);
+      return formatCurrency(summary.discountedSubtotal);
     case 'discountAmount':
-      return formatCurrency(summary?.discountAmount);
+      return formatCurrency(summary.discountAmount);
     case 'tax':
-      return formatCurrency(summary?.tax);
+      return formatCurrency(summary.tax);
     case 'shipping':
-      return formatCurrency(summary?.shipping);
+      return formatCurrency(summary.shipping);
     case 'grandTotal':
-      return formatCurrency(summary?.grandTotal);
+      return formatCurrency(summary.grandTotal);
     default:
-      return Strings.Cart.unavailableValue;
+      return formatCurrency(0);
   }
 }
 
@@ -88,11 +85,16 @@ function getSummaryRowLabel(key: CartSummaryRowKey): string {
 const useCart = (): UseCartReturn => {
   const dispatch = useAppDispatch();
   const cartItems = useAppSelector(CartSelectors.getCartItems);
-  const cartSummary = useAppSelector(CartSelectors.getCartSummary);
+  const cartSummary = useAppSelector(CartSelectors.getCartDisplaySummary);
   const totalProducts = useAppSelector(CartSelectors.getCartTotalProducts);
   const totalQuantity = useAppSelector(CartSelectors.getCartTotalQuantity);
   const cartError = useAppSelector(CartSelectors.getCartError);
   const isCartLoading = useAppSelector(CartSelectors.getCartLoading);
+  const isCartMutationLocked = useAppSelector(CartSelectors.getCartMutationLocked);
+  const activeMutationProductIds = useAppSelector(
+    (state) => CartSelectors.getCart(state).activeMutationProductIds
+  );
+  const checkoutAction = useAppSelector(CartSelectors.getCheckoutCallToActionState);
 
   const emptyStateContent = useMemo<CartEmptyStateContent>(
     () => ({
@@ -119,15 +121,18 @@ const useCart = (): UseCartReturn => {
         title: item.title,
         productIdValue: item.productId,
         quantity: item.quantity,
+        decrementAction: item.quantity <= 1 ? 'delete' : 'minus',
         unitPriceValue: formatCurrency(item.unitPrice),
         lineTotalValue: formatCurrency(item.lineTotal),
         discountedTotalValue: Number.isFinite(item.lineDiscountedTotal)
-          ? formatCurrency(item.lineDiscountedTotal)
+          ? formatCurrency(item.lineDiscountedTotal ?? 0)
           : undefined,
         discountValue: `${item.discountPercentage.toFixed(2)}%`,
-        thumbnailUrl: item.thumbnailUrl
+        thumbnailUrl: item.thumbnailUrl,
+        isMutating: activeMutationProductIds.includes(item.productId),
+        isDisabled: isCartMutationLocked
       })),
-    [cartItems]
+    [activeMutationProductIds, cartItems, isCartMutationLocked]
   );
 
   const summaryRows = useMemo<CartSummaryRow[]>(
@@ -136,10 +141,7 @@ const useCart = (): UseCartReturn => {
         key,
         label: getSummaryRowLabel(key),
         value: formatSummaryRowValue(key, cartSummary),
-        isUnavailable:
-          key === 'tax' || key === 'shipping' || key === 'grandTotal'
-            ? !Number.isFinite(cartSummary?.[key])
-            : false
+        isUnavailable: false
       })),
     [cartSummary]
   );
@@ -147,6 +149,39 @@ const useCart = (): UseCartReturn => {
   const handleRetry = useCallback((): void => {
     dispatch(CartActions.clearCartError());
   }, [dispatch]);
+
+  const handleIncrementCartItem = useCallback(
+    (productId: string): void => {
+      if (isCartMutationLocked) {
+        return;
+      }
+
+      dispatch(CartActions.incrementCartProduct({ productId }));
+    },
+    [dispatch, isCartMutationLocked]
+  );
+
+  const handleDecrementCartItem = useCallback(
+    (productId: string): void => {
+      const cartItem = cartItems.find((item) => item.productId === productId);
+
+      if (!cartItem || isCartMutationLocked) {
+        return;
+      }
+
+      if (cartItem.quantity <= 1) {
+        dispatch(CartActions.removeCartProduct({ productId }));
+        return;
+      }
+
+      dispatch(CartActions.decrementCartProduct({ productId }));
+    },
+    [cartItems, dispatch, isCartMutationLocked]
+  );
+
+  const handleCheckout = useCallback((): void => {
+    return;
+  }, []);
 
   const getItemLayout = useCallback(
     (_: ArrayLike<CartItemRowViewModel> | null | undefined, index: number) => ({
@@ -160,6 +195,7 @@ const useCart = (): UseCartReturn => {
   return {
     cartItems: itemRows,
     summaryRows,
+    checkoutAction: checkoutAction as CheckoutCallToActionState,
     totalProducts,
     totalQuantity,
     isCartLoading,
@@ -168,7 +204,10 @@ const useCart = (): UseCartReturn => {
     recoveryContent,
     cartErrorMessage: cartError?.message?.trim(),
     getItemLayout,
-    handleRetry
+    handleRetry,
+    handleIncrementCartItem,
+    handleDecrementCartItem,
+    handleCheckout
   };
 };
 

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { View } from 'react-native';
-import { Text } from '../../../../components';
+import { CustomButton, Text } from '../../../../components';
 import { Strings } from '../../../../constants';
 import { useTheme } from '../../../../hooks';
 import styleSheet from './CartSummaryStyles';
@@ -12,7 +12,13 @@ import type { CartSummaryProps } from './CartSummaryTypes';
  * @param {CartSummaryProps} props - Summary props.
  * @returns {React.ReactElement} Summary card.
  */
-const CartSummary = ({ rows, totalProducts, totalQuantity }: CartSummaryProps) => {
+const CartSummary = ({
+  checkoutAction,
+  onCheckout,
+  rows,
+  totalProducts,
+  totalQuantity
+}: CartSummaryProps) => {
   const { styles } = useTheme(styleSheet);
 
   return (
@@ -45,18 +51,22 @@ const CartSummary = ({ rows, totalProducts, totalQuantity }: CartSummaryProps) =
             <Text style={[styles.summaryLabel, isGrandTotal ? styles.grandTotalLabel : undefined]}>
               {row.label}
             </Text>
-            <Text
-              style={[
-                styles.summaryValue,
-                row.isUnavailable ? styles.unavailableValue : undefined,
-                isGrandTotal ? styles.grandTotalValue : undefined
-              ]}
-            >
+            <Text style={[styles.summaryValue, isGrandTotal ? styles.grandTotalValue : undefined]}>
               {row.value}
             </Text>
           </View>
         );
       })}
+
+      {checkoutAction.isVisible ? (
+        <View style={styles.checkoutButtonWrap}>
+          <CustomButton
+            disabled={checkoutAction.isDisabled}
+            title={checkoutAction.label}
+            onPress={onCheckout}
+          />
+        </View>
+      ) : null}
     </View>
   );
 };

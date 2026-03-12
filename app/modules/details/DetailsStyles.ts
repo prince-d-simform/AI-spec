@@ -9,55 +9,6 @@ import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../theme';
 const styleSheet = (theme: ThemeMode) =>
   StyleSheet.create({
     ...ApplicationStyles(theme),
-    addedStateCard: {
-      alignItems: 'center',
-      backgroundColor: Colors[theme]?.pastelLemon,
-      borderRadius: scale(18),
-      columnGap: scale(14),
-      flexDirection: 'row',
-      paddingHorizontal: scale(16),
-      paddingVertical: scale(14)
-    },
-    addedStateIcon: {
-      color: Colors[theme]?.primary
-    },
-    addedStateIconWrap: {
-      alignItems: 'center',
-      backgroundColor: Colors[theme]?.secondary,
-      borderRadius: scale(999),
-      height: scale(40),
-      justifyContent: 'center',
-      width: scale(40)
-    },
-    addedStateMessage: {
-      color: Colors[theme]?.gray,
-      fontSize: scale(12),
-      lineHeight: scale(18)
-    },
-    addedStateQuantityLabel: {
-      color: Colors[theme]?.gray,
-      fontSize: scale(10),
-      fontWeight: '600',
-      textTransform: 'uppercase'
-    },
-    addedStateQuantityValue: {
-      color: Colors[theme]?.black,
-      fontSize: scale(18),
-      fontWeight: '700'
-    },
-    addedStateQuantityWrap: {
-      alignItems: 'center',
-      rowGap: scale(2)
-    },
-    addedStateTextWrap: {
-      flex: 1,
-      rowGap: scale(4)
-    },
-    addedStateTitle: {
-      color: Colors[theme]?.black,
-      fontSize: scale(15),
-      fontWeight: '700'
-    },
     cartErrorText: {
       color: Colors[theme]?.error,
       fontSize: scale(12),
@@ -198,6 +149,70 @@ const styleSheet = (theme: ThemeMode) =>
       color: Colors[theme]?.primary,
       fontSize: scale(24),
       fontWeight: '700'
+    },
+    quantityActionButton: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.secondary,
+      borderRadius: scale(999),
+      height: scale(40),
+      justifyContent: 'center',
+      width: scale(40)
+    },
+    quantityActionButtonDanger: {
+      backgroundColor: Colors[theme]?.pastelPeach
+    },
+    quantityActionButtonDisabled: {
+      opacity: 0.5
+    },
+    quantityActionIcon: {
+      color: Colors[theme]?.primary
+    },
+    quantityActionIconDanger: {
+      color: Colors[theme]?.error
+    },
+    quantityControlRow: {
+      alignItems: 'center',
+      columnGap: scale(10),
+      flexDirection: 'row'
+    },
+    quantityFooterCard: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.pastelLemon,
+      borderRadius: scale(18),
+      columnGap: scale(14),
+      flexDirection: 'row',
+      paddingHorizontal: scale(16),
+      paddingVertical: scale(14)
+    },
+    quantityMessage: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(12),
+      lineHeight: scale(18)
+    },
+    quantityTextWrap: {
+      flex: 1,
+      rowGap: scale(4)
+    },
+    quantityTitle: {
+      color: Colors[theme]?.black,
+      fontSize: scale(15),
+      fontWeight: '700'
+    },
+    quantityValue: {
+      color: Colors[theme]?.black,
+      fontSize: scale(18),
+      fontWeight: '700'
+    },
+    quantityValueLabel: {
+      color: Colors[theme]?.gray,
+      fontSize: scale(10),
+      fontWeight: '600',
+      textTransform: 'uppercase'
+    },
+    quantityValueWrap: {
+      alignItems: 'center',
+      minWidth: scale(48),
+      rowGap: scale(2)
     },
     reviewCard: {
       backgroundColor: Colors[theme]?.chipInactive,

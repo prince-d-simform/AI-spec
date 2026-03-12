@@ -49,7 +49,11 @@
     "discountedLineTotalLabel": "Discounted total",
     "quantityLabel": "Quantity",
     "discountLabel": "Discount",
-    "invalidProductMessage": "This product can't be added to the cart right now."
+    "invalidProductMessage": "This product can't be added to the cart right now.",
+    "checkoutButton": "Checkout",
+    "incrementQuantityAccessibility": "Increase quantity",
+    "decrementQuantityAccessibility": "Decrease quantity",
+    "deleteQuantityAccessibility": "Remove product from cart"
   },
   "details": {
     "title": "Product Detail",
