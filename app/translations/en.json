@@ -100,8 +100,27 @@
   },
   "profile": {
     "screenTitle": "Profile",
-    "emptyTitle": "Your profile space is ready",
-    "emptyMessage": "This tab is a placeholder landing screen for the upcoming profile experience."
+    "loadingTitle": "Loading profile...",
+    "loadingMessage": "Fetching your details. Please wait.",
+    "fetchSubtitle": "We only show the essentials you care about.",
+    "viewOnlyMessage": "Profile is read-only right now.",
+    "viewOnlyTagline": "We're showing the latest info from your account.",
+    "errorTitle": "Unable to load profile",
+    "errorMessage": "We couldn't fetch your details right now.",
+    "offlineMessage": "You can retry once you're back online.",
+    "retryButton": "Retry",
+    "nameLabel": "Full name",
+    "emailLabel": "Email",
+    "phoneLabel": "Phone",
+    "locationLabel": "Location",
+    "roleLabel": "Role",
+    "bioLabel": "About you",
+    "nameFallback": "Name unavailable",
+    "phoneFallback": "Phone unavailable",
+    "locationFallback": "Location not available",
+    "roleFallback": "Role not available",
+    "bioFallback": "Bio not available",
+    "missingValue": "Not provided"
   },
   "apiError": {
     "clientError": "Invalid or incomplete data provided by the client.",
@@ -123,7 +142,11 @@
     "lowercasePasswordError": "Must contain at least one lowercase letter.",
     "uppercasePasswordError": "Must contain at least one uppercase letter.",
     "specialPasswordError": "Must contain at least one special character.",
-    "digitPasswordError": "Must contain at least one digit."
+    "digitPasswordError": "Must contain at least one digit.",
+    "requireNameError": "Please enter your name.",
+    "lengthNameError": "Name must be between 2 and 60 characters.",
+    "invalidPhoneError": "Enter a valid phone number (7-20 digits).",
+    "lengthBioError": "Bio must be 160 characters or fewer."
   },
   "auth": {
     "hintEmail": "Email",

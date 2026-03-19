@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "@expo/config-plugins": "54.0.1",
+    "@expo-google-fonts/rubik": "0.4.2",
     "@expo/vector-icons": "15.0.2",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/core": "6.4.17",

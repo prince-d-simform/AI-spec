@@ -3,6 +3,8 @@ declare var process: {
     EXPO_PUBLIC_ENVIRONMENT?: string;
     EXPO_PUBLIC_SENTRY_URL?: string;
     EXPO_PUBLIC_API_URL?: string;
+    EXPO_PUBLIC_PROFILE_EDIT_ENABLED?: string;
+    EXPO_PUBLIC_PROFILE_AVATAR_UPLOAD_ENABLED?: string;
   };
 };
 
@@ -16,5 +18,8 @@ export default Object.freeze({
     __DEV__ || (process.env.EXPO_PUBLIC_ENVIRONMENT ?? 'development') === 'development',
   environment: process.env.EXPO_PUBLIC_ENVIRONMENT ?? 'development',
   sentryUrl: process.env.EXPO_PUBLIC_SENTRY_URL ?? '',
-  apiUrl: process.env.EXPO_PUBLIC_API_URL ?? 'https://dummyjson.com'
+  apiUrl: process.env.EXPO_PUBLIC_API_URL ?? 'https://dummyjson.com',
+  profileEditEnabled: (process.env.EXPO_PUBLIC_PROFILE_EDIT_ENABLED ?? 'false') === 'true',
+  profileAvatarUploadEnabled:
+    (process.env.EXPO_PUBLIC_PROFILE_AVATAR_UPLOAD_ENABLED ?? 'false') === 'true'
 });

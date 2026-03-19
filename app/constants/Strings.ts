@@ -46,7 +46,11 @@ const YupError = freezeStringsObject({
   lowercasePasswordError: I18n.t('yupError:lowercasePasswordError'),
   uppercasePasswordError: I18n.t('yupError:uppercasePasswordError'),
   specialPasswordError: I18n.t('yupError:specialPasswordError'),
-  digitPasswordError: I18n.t('yupError:digitPasswordError')
+  digitPasswordError: I18n.t('yupError:digitPasswordError'),
+  requireNameError: I18n.t('yupError:requireNameError'),
+  lengthNameError: I18n.t('yupError:lengthNameError'),
+  invalidPhoneError: I18n.t('yupError:invalidPhoneError'),
+  lengthBioError: I18n.t('yupError:lengthBioError')
 });
 
 const Home = freezeStringsObject({
@@ -154,8 +158,27 @@ const Details = freezeStringsObject({
 
 const Profile = freezeStringsObject({
   screenTitle: I18n.t('profile:screenTitle'),
-  emptyTitle: I18n.t('profile:emptyTitle'),
-  emptyMessage: I18n.t('profile:emptyMessage')
+  loadingTitle: I18n.t('profile:loadingTitle'),
+  loadingMessage: I18n.t('profile:loadingMessage'),
+  fetchSubtitle: I18n.t('profile:fetchSubtitle'),
+  viewOnlyMessage: I18n.t('profile:viewOnlyMessage'),
+  viewOnlyTagline: I18n.t('profile:viewOnlyTagline'),
+  errorTitle: I18n.t('profile:errorTitle'),
+  errorMessage: I18n.t('profile:errorMessage'),
+  offlineMessage: I18n.t('profile:offlineMessage'),
+  retryButton: I18n.t('profile:retryButton'),
+  nameLabel: I18n.t('profile:nameLabel'),
+  emailLabel: I18n.t('profile:emailLabel'),
+  phoneLabel: I18n.t('profile:phoneLabel'),
+  locationLabel: I18n.t('profile:locationLabel'),
+  roleLabel: I18n.t('profile:roleLabel'),
+  bioLabel: I18n.t('profile:bioLabel'),
+  nameFallback: I18n.t('profile:nameFallback'),
+  phoneFallback: I18n.t('profile:phoneFallback'),
+  locationFallback: I18n.t('profile:locationFallback'),
+  roleFallback: I18n.t('profile:roleFallback'),
+  bioFallback: I18n.t('profile:bioFallback'),
+  missingValue: I18n.t('profile:missingValue')
 });
 
 const Auth = freezeStringsObject({

@@ -10,3 +10,10 @@ export type {
   RemoteProductReview,
   RemoteProductsResponse
 } from './ProductListResponse';
+export type {
+  RemoteProfileResponse,
+  ProfileUpdateRequest,
+  AvatarUploadResponse,
+  RemoteCompany,
+  RemoteAddress
+} from './ProfileResponse';

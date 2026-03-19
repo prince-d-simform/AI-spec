@@ -12,5 +12,8 @@ export default Object.freeze({
   addProductToCart: 'cart/addProductToCart',
   incrementCartProduct: 'cart/incrementCartProduct',
   decrementCartProduct: 'cart/decrementCartProduct',
-  removeCartProduct: 'cart/removeCartProduct'
+  removeCartProduct: 'cart/removeCartProduct',
+  fetchProfile: 'profile/fetchProfile',
+  updateProfile: 'profile/updateProfile',
+  uploadAvatar: 'profile/uploadAvatar'
 });
