@@ -6,6 +6,7 @@ import { reduxStorage } from '../services';
 import { AuthReducer } from './auth';
 import { CartReducer } from './cart';
 import { ProductsReducer } from './products';
+import { ProfileReducer } from './profile';
 import type { CartStateType } from './cart';
 
 const cartPersistTransform = createTransform<CartStateType, Partial<CartStateType>>(
@@ -56,7 +57,8 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: AuthReducer,
   cart: CartReducer,
-  products: ProductsReducer
+  products: ProductsReducer,
+  profile: ProfileReducer
 });
 
 /**

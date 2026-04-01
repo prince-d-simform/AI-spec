@@ -9,49 +9,95 @@ import { ApplicationStyles, Colors, scale, type ThemeMode } from '../../theme';
 const styleSheet = (theme: ThemeMode) =>
   StyleSheet.create({
     ...ApplicationStyles(theme),
-    body: {
-      alignItems: 'center',
-      flex: 1,
-      justifyContent: 'center',
-      paddingHorizontal: scale(24)
-    },
-    card: {
-      alignItems: 'center',
-      backgroundColor: Colors[theme]?.cardBackground,
-      borderRadius: scale(24),
-      elevation: scale(2),
-      paddingHorizontal: scale(24),
-      paddingVertical: scale(32),
-      rowGap: scale(12),
-      shadowColor: Colors[theme]?.cardShadow,
-      shadowOffset: { width: 0, height: scale(2) },
-      shadowOpacity: 1,
-      shadowRadius: scale(8),
+    avatarImage: {
+      height: '100%',
       width: '100%'
     },
-    iconWrap: {
+    avatarWrap: {
       alignItems: 'center',
-      backgroundColor: Colors[theme]?.pastelSky,
-      borderRadius: scale(999),
-      height: scale(88),
+      backgroundColor: Colors[theme]?.imagePlaceholder,
+      borderRadius: scale(12),
+      height: scale(84),
       justifyContent: 'center',
-      width: scale(88)
+      overflow: 'hidden',
+      width: scale(84)
     },
-    message: {
+    divider: {
+      backgroundColor: Colors[theme]?.chipInactive,
+      height: scale(1),
+      marginVertical: scale(12)
+    },
+    errorText: {
+      color: Colors[theme]?.error
+    },
+    formCard: {
+      backgroundColor: Colors[theme]?.cardBackground,
+      borderRadius: scale(16),
+      padding: scale(16),
+      rowGap: scale(12),
+      shadowColor: Colors[theme]?.cardShadow,
+      shadowOffset: { width: 0, height: scale(4) },
+      shadowOpacity: 1,
+      shadowRadius: scale(10)
+    },
+    hero: {
+      alignItems: 'center',
+      backgroundColor: Colors[theme]?.cardBackground,
+      borderRadius: scale(20),
+      columnGap: scale(16),
+      flexDirection: 'row',
+      padding: scale(16),
+      shadowColor: Colors[theme]?.cardShadow,
+      shadowOffset: { width: 0, height: scale(4) },
+      shadowOpacity: 1,
+      shadowRadius: scale(10)
+    },
+    heroActions: {
+      rowGap: scale(8),
+      width: '100%'
+    },
+    heroText: {
+      flex: 1,
+      rowGap: scale(4)
+    },
+    hint: {
+      color: Colors[theme]?.gray
+    },
+    infoGrid: {
+      rowGap: scale(12)
+    },
+    inlineRow: {
+      alignItems: 'center',
+      columnGap: scale(8),
+      flexDirection: 'row'
+    },
+    input: {
+      backgroundColor: Colors[theme]?.white,
+      borderColor: Colors[theme]?.chipInactive,
+      borderRadius: scale(12),
+      borderWidth: scale(1),
+      color: Colors[theme]?.black,
+      paddingHorizontal: scale(12),
+      paddingVertical: scale(10)
+    },
+    label: {
       color: Colors[theme]?.gray,
-      fontSize: scale(14),
-      lineHeight: scale(22),
-      textAlign: 'center'
+      marginBottom: scale(6)
     },
     screen: {
       backgroundColor: Colors[theme]?.screenBackground,
       flex: 1
     },
-    title: {
-      color: Colors[theme]?.black,
-      fontSize: scale(22),
-      fontWeight: '700',
-      textAlign: 'center'
+    scrollContent: {
+      paddingBottom: scale(40),
+      rowGap: scale(16)
+    },
+    section: {
+      paddingHorizontal: scale(20)
+    },
+    textArea: {
+      minHeight: scale(100),
+      textAlignVertical: 'top'
     }
   });
 

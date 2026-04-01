@@ -22,6 +22,8 @@ Auto-generated from all feature plans. Last updated: 2026-03-03
 - MMKV-backed redux-persist for the confirmed cart snapshot and hydration metadata (001-cart-add-only)
 - TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23 (001-fix-cart-item-ui)
 - Existing MMKV-backed redux-persist cart snapshot; no new storage required (001-fix-cart-item-ui)
+- TypeScript 5.8, React Native 0.81.4 (Expo SDK 54) + React Navigation v6, Redux Toolkit 2.5 + redux-persist + MMKV, Apisauce 3 (Axios 1.10), Formik 2 + Yup 1, i18next 23 (001-profile-screen-api)
+- MMKV (persisted whitelist currently auth; profile not persisted unless justified) (001-profile-screen-api)
 
 - TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54 + `react-native` (Text, StyleSheet), `useTheme` hook, `scale()` from Metrics, `Colors`/`ApplicationStyles` from theme barrel (003-text-variant-component)
 
@@ -41,7 +43,7 @@ npm test && npm run lint
 TypeScript 5.8 — strict mode; React Native 0.81.4 + Expo SDK 54: Follow standard conventions
 
 ## Recent Changes
-- 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
+- 001-profile-screen-api: Added TypeScript 5.8, React Native 0.81.4 (Expo SDK 54) + React Navigation v6, Redux Toolkit 2.5 + redux-persist + MMKV, Apisauce 3 (Axios 1.10), Formik 2 + Yup 1, i18next 23
 - 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
 - 001-fix-cart-item-ui: Added TypeScript 5.8.3, React Native 0.81.4, Expo SDK 54 + React Navigation 6, Redux Toolkit 2.5, react-redux 9.2, Expo Vector Icons 15, i18next 23
 
