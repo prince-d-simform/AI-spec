@@ -1,4 +1,4 @@
-import React, { useCallback, type FC } from 'react';
+import React, { useCallback, useMemo, type FC } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import { CustomButton, Spinner, Text } from '../../components';
 import { Strings } from '../../constants';
@@ -190,11 +190,29 @@ const HomeScreen: FC = (): React.ReactElement => {
     );
   }, [shouldShowRefreshError, styles.productStatusContainer, styles.productStatusText]);
 
-  const productFeedback =
-    renderCategoryProductsLoadingState() ||
-    renderCategoryProductRetryState() ||
-    renderProductsLoadingState() ||
-    renderProductRetryState();
+  const productFeedback = useMemo(
+    () =>
+      renderCategoryProductsLoadingState() ||
+      renderCategoryProductRetryState() ||
+      renderProductsLoadingState() ||
+      renderProductRetryState(),
+    [
+      renderCategoryProductsLoadingState,
+      renderCategoryProductRetryState,
+      renderProductsLoadingState,
+      renderProductRetryState
+    ]
+  );
+
+  const flatListContentContainerStyle = useMemo(
+    () => [styles.grid, filteredProducts.length === 0 ? styles.gridEmptyContent : undefined],
+    [filteredProducts.length, styles.grid, styles.gridEmptyContent]
+  );
+
+  const flatListColumnWrapperStyle = useMemo(
+    () => (filteredProducts.length > 0 ? styles.columnWrapper : undefined),
+    [filteredProducts.length, styles.columnWrapper]
+  );
 
   return (
     <View style={styles.screen}>
@@ -214,13 +232,14 @@ const HomeScreen: FC = (): React.ReactElement => {
       {productFeedback || (
         <FlatList<Product>
           removeClippedSubviews
-          columnWrapperStyle={filteredProducts.length > 0 ? styles.columnWrapper : undefined}
-          contentContainerStyle={[
-            styles.grid,
-            filteredProducts.length === 0 ? styles.gridEmptyContent : undefined
-          ]}
+          columnWrapperStyle={flatListColumnWrapperStyle}
+          contentContainerStyle={flatListContentContainerStyle}
           data={filteredProducts}
+          // Covers ~3 visible rows in the 2-column grid without over-rendering on first paint.
+          initialNumToRender={6}
           ListEmptyComponent={renderEmptyState}
+          // Render 2 rows per JS frame during scroll to reduce JS thread pressure.
+          maxToRenderPerBatch={4}
           numColumns={2}
           windowSize={5}
           keyExtractor={keyExtractor}
