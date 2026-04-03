@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, type FC } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
 import { CustomButton, Spinner, Text } from '../../components';
 import { Strings } from '../../constants';
 import { useTheme } from '../../hooks';
+import { scale } from '../../theme';
 import styleSheet from './HomeStyles';
 import { CategoryChip } from './sub-components/category-chip';
 import { CategoryChipShimmer } from './sub-components/category-chip-shimmer';
@@ -17,7 +19,7 @@ import type { Category, Product } from './HomeTypes';
  *   SafeAreaView (screenBackground)
  *   └── HomeHeader                    (branded greeting)
  *   └── ScrollView horizontal         (category chip row — sticky)
- *   └── FlatList numColumns={2}       (product grid or empty state)
+ *   └── FlashList numColumns={2}      (product grid or empty state)
  *
  * All state and logic delegated to useHome().
  */
@@ -204,14 +206,9 @@ const HomeScreen: FC = (): React.ReactElement => {
     ]
   );
 
-  const flatListContentContainerStyle = useMemo(
+  const flashListContentContainerStyle = useMemo(
     () => [styles.grid, filteredProducts.length === 0 ? styles.gridEmptyContent : undefined],
     [filteredProducts.length, styles.grid, styles.gridEmptyContent]
-  );
-
-  const flatListColumnWrapperStyle = useMemo(
-    () => (filteredProducts.length > 0 ? styles.columnWrapper : undefined),
-    [filteredProducts.length, styles.columnWrapper]
   );
 
   return (
@@ -230,18 +227,13 @@ const HomeScreen: FC = (): React.ReactElement => {
       {renderCategoryStatus()}
       {renderProductStatus()}
       {productFeedback || (
-        <FlatList<Product>
-          removeClippedSubviews
-          columnWrapperStyle={flatListColumnWrapperStyle}
-          contentContainerStyle={flatListContentContainerStyle}
+        <FlashList<Product>
+          contentContainerStyle={flashListContentContainerStyle}
           data={filteredProducts}
-          // Covers ~3 visible rows in the 2-column grid without over-rendering on first paint.
-          initialNumToRender={6}
+          // Estimated height of a ProductCard in the 2-column grid (image + info section), scaled to device.
+          estimatedItemSize={scale(300)}
           ListEmptyComponent={renderEmptyState}
-          // Render 2 rows per JS frame during scroll to reduce JS thread pressure.
-          maxToRenderPerBatch={4}
           numColumns={2}
-          windowSize={5}
           keyExtractor={keyExtractor}
           refreshing={activeCategory === 'all' ? isProductsRefreshing : false}
           renderItem={renderProductItem}

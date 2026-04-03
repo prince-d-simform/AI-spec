@@ -27,10 +27,6 @@ const styles = (theme: ThemeMode) =>
       paddingHorizontal: scale(10),
       paddingTop: scale(4)
     },
-    /** columnWrapperStyle for the 2-column FlatList */
-    columnWrapper: {
-      justifyContent: 'space-between'
-    },
     /** Empty-state container — centred vertically */
     emptyContainer: {
       alignItems: 'center',
@@ -56,7 +52,7 @@ const styles = (theme: ThemeMode) =>
       fontSize: scale(15),
       textAlign: 'center'
     },
-    /** FlatList contentContainerStyle */
+    /** FlashList contentContainerStyle */
     grid: {
       paddingBottom: scale(24),
       paddingHorizontal: scale(8)
